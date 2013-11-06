@@ -28,6 +28,18 @@ public class ProcessForkItem extends ProcessItem {
 	}
 	
 	public Set<ProcessItem> getFollowingItems() {
+		for (ProcessItem processItem : super.getFollowingItems()) {			
+			checkOutlineCondition(processItem);
+		}
 		return super.getFollowingItems();
+	}
+
+	private void checkOutlineCondition(ProcessItem processItem) {
+		logger.info("checking outline condition fpr process item : "+processItem+".");
+		try {
+			((Class<? extends FlowDecision>) outlineConditions.get(processItem.getIdentifier())).newInstance().conditionValid();
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
 	}
 }
