@@ -3,10 +3,14 @@ package de.gravitex.processing.core.item;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import de.gravitex.processing.core.ProcessItemType;
 import de.gravitex.processing.core.logic.FlowDecision;
 
 public class ProcessForkItem extends ProcessItem {
+	
+	private static Logger			logger					= Logger.getLogger(ProcessForkItem.class);
 	
 	private HashMap<String, Class<? extends FlowDecision>> outlineConditions;
 
