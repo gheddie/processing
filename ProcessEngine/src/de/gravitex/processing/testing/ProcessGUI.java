@@ -1,4 +1,4 @@
-package de.gravitex.processing;
+package de.gravitex.processing.testing;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import de.gravitex.processing.core.ProcessContainer;
+import de.gravitex.processing.testing.ProcessDefinitionProvider;
 
 public class ProcessGUI extends JFrame {
 
@@ -37,10 +38,10 @@ public class ProcessGUI extends JFrame {
 		// processContainer = ProcessDefinitionProvider.getT4();
 
 		// OK
-		// processContainer = ProcessDefinitionProvider.getT5();
+		processContainer = ProcessDefinitionProvider.getT5();
 
 		// OK
-		processContainer = ProcessDefinitionProvider.getT6();
+		// processContainer = ProcessDefinitionProvider.getT6();
 		
 		// processContainer = ProcessDefinitionProvider.getT7();
 	}

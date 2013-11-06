@@ -1,10 +1,11 @@
-package de.gravitex.processing;
+package de.gravitex.processing.testing;
 
 import de.gravitex.processing.core.ProcessContainer;
 import de.gravitex.processing.core.ProcessItemFactory;
 import de.gravitex.processing.core.ProcessItemType;
 import de.gravitex.processing.core.exception.ProcessException;
 import de.gravitex.processing.core.item.ProcessItem;
+import de.gravitex.processing.testing.decision.DecisionForA1;
 
 public class ProcessDefinitionProvider {
 
@@ -71,7 +72,7 @@ public class ProcessDefinitionProvider {
 			ProcessItem a3 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a3");
 			processContainer.addElement(a3);
 			
-			ProcessItem j1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "j1");
+			ProcessItem j1 = ProcessItemFactory.getProcessElement(ProcessItemType.JOIN, "j1");
 			processContainer.addElement(j1);
 			
 			ProcessItem e1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e1");
@@ -89,6 +90,9 @@ public class ProcessDefinitionProvider {
 			processContainer.relateParent("j1", "a3");
 			
 			processContainer.relateParent("e1", "j1");
+			
+			//conditions
+			processContainer.addCondition("f1", "a1", DecisionForA1.class);
 			
 		} catch (ProcessException e) {
 			e.printStackTrace();
