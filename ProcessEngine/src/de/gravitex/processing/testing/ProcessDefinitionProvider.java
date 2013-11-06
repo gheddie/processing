@@ -6,6 +6,8 @@ import de.gravitex.processing.core.ProcessItemType;
 import de.gravitex.processing.core.exception.ProcessException;
 import de.gravitex.processing.core.item.ProcessItem;
 import de.gravitex.processing.testing.decision.DecisionForA1;
+import de.gravitex.processing.testing.decision.DecisionForA2;
+import de.gravitex.processing.testing.decision.DecisionForA3;
 
 public class ProcessDefinitionProvider {
 
@@ -93,6 +95,8 @@ public class ProcessDefinitionProvider {
 			
 			//conditions
 			processContainer.addCondition("f1", "a1", DecisionForA1.class);
+			processContainer.addCondition("f1", "a2", DecisionForA2.class);
+			processContainer.addCondition("f1", "a3", DecisionForA3.class);
 			
 		} catch (ProcessException e) {
 			e.printStackTrace();

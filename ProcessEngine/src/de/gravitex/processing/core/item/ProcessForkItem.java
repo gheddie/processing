@@ -1,6 +1,7 @@
 package de.gravitex.processing.core.item;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -28,18 +29,28 @@ public class ProcessForkItem extends ProcessItem {
 	}
 	
 	public Set<ProcessItem> getFollowingItems() {
+		Set<ProcessItem> effectiveFollowingItems = new HashSet<>();
 		for (ProcessItem processItem : super.getFollowingItems()) {			
-			checkOutlineCondition(processItem);
-		}
-		return super.getFollowingItems();
+			if (checkOutlineCondition(processItem)) {
+				effectiveFollowingItems.add(processItem);
+			}
+		}		
+		return effectiveFollowingItems ;
 	}
 
-	private void checkOutlineCondition(ProcessItem processItem) {
+	private boolean checkOutlineCondition(ProcessItem processItem) {
 		logger.info("checking outline condition fpr process item : "+processItem+".");
 		try {
-			((Class<? extends FlowDecision>) outlineConditions.get(processItem.getIdentifier())).newInstance().conditionValid();
+			boolean conditionValid = ((Class<? extends FlowDecision>) outlineConditions.get(processItem.getIdentifier())).newInstance().conditionValid();
+			if (conditionValid) {
+				logger.trace("condition valid for item identifier '"+processItem.getIdentifier()+"'...");
+			} else {
+				logger.trace("condition invalid for item identifier '"+processItem.getIdentifier()+"'...");
+			}
+			return conditionValid;
 		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e);
+			return false;
 		}
 	}
 }
