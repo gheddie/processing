@@ -40,9 +40,9 @@ public class ProcessGUI extends JFrame {
 		// processContainer = ProcessDefinitionProvider.getT5();
 
 		// OK
-		// processContainer = ProcessDefinitionProvider.getT6();
+		processContainer = ProcessDefinitionProvider.getT6();
 		
-		processContainer = ProcessDefinitionProvider.getT7();
+		// processContainer = ProcessDefinitionProvider.getT7();
 	}
 
 	// ---

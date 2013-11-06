@@ -105,20 +105,20 @@ public class ProcessDefinitionProvider {
 			ProcessItem s1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "s1");
 			processContainer.addElement(s1);
 			
-			ProcessItem j1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "j1");
+			ProcessItem j1 = ProcessItemFactory.getProcessElement(ProcessItemType.JOIN, "j1");
 			processContainer.addElement(j1);
-			ProcessItem a1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "a1");
+			ProcessItem a1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a1");
 			processContainer.addElement(a1);
-			ProcessItem f1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "f1");
+			ProcessItem f1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "f1");
 			processContainer.addElement(f1);
-			ProcessItem a2 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "a2");
+			ProcessItem a2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a2");
 			processContainer.addElement(a2);
-			ProcessItem f2 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "f2");
+			ProcessItem f2 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "f2");
 			processContainer.addElement(f2);
 			
-			ProcessItem e1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "e1");
+			ProcessItem e1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e1");
 			processContainer.addElement(e1);
-			ProcessItem e2 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "e2");
+			ProcessItem e2 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e2");
 			processContainer.addElement(e2);
 			
 			//relations
