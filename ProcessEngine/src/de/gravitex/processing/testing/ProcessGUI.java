@@ -55,7 +55,8 @@ public class ProcessGUI extends JFrame {
 	public static void main(String[] args) {
 		
 		//log4j
-		PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
+		//PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
+		PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
 		
 		//start process gui
 		new ProcessGUI();
