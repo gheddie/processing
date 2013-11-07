@@ -1,0 +1,32 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam activity {
+  BackgroundColor<<Action>> #00FF00
+  BackgroundColor<<Task>> #FF0000
+  BackgroundColor<<TimerTask>> #FFFF00  
+  BackgroundColor<<Join>> #00FFFF
+  BackgroundColor<<End>> #CCCCCC
+}
+(*)--> "Dokumenten-Share vorbereiten" <<Action>>
+--> "Haftungssumme kalkulieren und in SAP einpflegen" <<Task>>
+--> if "" then
+ 	--> ["Haftung < 50K Euro"] join_1 <<Join>>  
+else
+	-->["Haftung >= 50K Euro"] "Rechtefreigabe per\nMail beantragen" <<Action>>
+	--> "Rechtefreigabe erfassen" <<Task>>
+	--> join_1  
+endif
+--> "Mitteilung generieren und an Beschuldigten senden" <<Action>>
+--> "Stellungnahme des Beschuldigten in SAP erfassen" as Erfassung_Daten <<TimerTask>>
+
+--> if "" then
+	--> [Daten der Stellung-\nnahme vollständig] "Bestätigung an Beschuldigten senden" <<Action>>
+	--> "end_1" <<End>>
+else
+	--> [Daten der Stellung-\nnahme nicht vollständig] "Erinnerung an Stellungnahme mit\nHilfestellungen an Beschuldigten senden" <<Action>>
+	--> Erfassung_Daten
+else
+	..> [Timer Fired] "Inkasso benachrichtigen" <<Action>>
+	--> "end_2" <<End>>	
+	
+@enduml
