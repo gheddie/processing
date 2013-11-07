@@ -1,6 +1,5 @@
 package de.gravitex.processing.core.logic;
 
-import de.gravitex.processing.core.exception.ProcessException;
 import de.gravitex.processing.core.exception.ProcessExecutionException;
 
 public interface FlowAction {

@@ -30,16 +30,16 @@ public class ProcessForkItem extends ProcessItem {
 	
 	public Set<ProcessItem> getFollowingItems() {
 		Set<ProcessItem> effectiveFollowingItems = new HashSet<>();
-		for (ProcessItem processItem : super.getFollowingItems()) {			
+		for (ProcessItem processItem : super.getFollowingItems()) {
 			if (checkOutlineCondition(processItem)) {
 				effectiveFollowingItems.add(processItem);
 			}
 		}		
-		return effectiveFollowingItems ;
+		return effectiveFollowingItems;
 	}
 
 	private boolean checkOutlineCondition(ProcessItem processItem) {
-		logger.info("checking outline condition fpr process item : "+processItem+".");
+		logger.info("checking outline condition for process item : "+processItem+".");
 		try {
 			boolean conditionValid = ((Class<? extends FlowDecision>) outlineConditions.get(processItem.getIdentifier())).newInstance().conditionValid();
 			if (conditionValid) {

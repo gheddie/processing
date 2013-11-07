@@ -4,13 +4,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import de.gravitex.processing.core.exception.ProcessException;
+import de.gravitex.processing.core.item.ProcessActionItem;
 import de.gravitex.processing.core.item.ProcessForkItem;
 import de.gravitex.processing.core.item.ProcessItem;
+import de.gravitex.processing.core.logic.FlowAction;
 import de.gravitex.processing.core.logic.FlowDecision;
-import de.gravitex.processing.testing.decision.DecisionForA1;
+import de.gravitex.processing.testing.action.ActionA2;
 
 public class ProcessContainer {
+	
+	private static Logger			logger					= Logger.getLogger(ProcessContainer.class);
 
 	private HashMap<String, ProcessItem> processElements;
 
@@ -37,31 +43,34 @@ public class ProcessContainer {
 			}
 		}
 
-		System.out.println("adding process element : " + processElement);
+		logger.info("adding process element : " + processElement);
 		processElements.put(processElement.getIdentifier(), processElement);
 	}
 
 	public void proceed() {
-		System.out.println("proceeding...");
+		logger.trace("proceeding...");
 		Set<ProcessItem> newItemsInControl = new HashSet<>();
 		for (ProcessItem item : itemsInControl) {
 			newItemsInControl.addAll(item.getFollowingItems());
 		}
 		itemsInControl = newItemsInControl;
+		for (ProcessItem item : itemsInControl) {
+			item.gainControl();
+		}
 		debugControl();
 	}
 
 	private void debugControl() {
 		if (itemsInControl.size() > 0) {
-			System.out.println("---------------------------------");
+			logger.info("---------------------------------");
 			for (ProcessItem item : itemsInControl) {
-				System.out.println("IN CONTROL : " + item);
+				logger.info("IN CONTROL : " + item);
 			}
-			System.out.println("---------------------------------");
+			logger.info("---------------------------------");
 		} else {
-			System.out.println("---------------------------------");
-			System.out.println("NO ITEMS IN CONTROL");
-			System.out.println("---------------------------------");
+			logger.info("---------------------------------");
+			logger.info("NO ITEMS IN CONTROL");
+			logger.info("---------------------------------");
 		}
 	}
 
@@ -81,7 +90,11 @@ public class ProcessContainer {
 		item.addParentItem(parent);
 	}
 
-	public void addCondition(String itemIdentifier, String outgoingFlowDescriptor, Class<? extends FlowDecision> flowDecisionClazz) {
-		((ProcessForkItem) processElements.get(itemIdentifier)).addOutlineCondition(outgoingFlowDescriptor, flowDecisionClazz);
+	public void addCondition(String itemIdentifier, String outgoingFlowDescriptor, Class<? extends FlowDecision> flowDecisionClass) {
+		((ProcessForkItem) processElements.get(itemIdentifier)).addOutlineCondition(outgoingFlowDescriptor, flowDecisionClass);
+	}
+
+	public void addAction(String itemIdentifier, Class<? extends FlowAction> actionClass) {
+		((ProcessActionItem) processElements.get(itemIdentifier)).setActionClass(actionClass);		
 	}
 }

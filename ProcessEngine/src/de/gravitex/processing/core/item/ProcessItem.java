@@ -45,4 +45,8 @@ public abstract class ProcessItem {
 	public void addParentItem(ProcessItem parentItem) {
 		parentItems.add(parentItem);
 	}
+
+	public void gainControl() {
+		// empty base implementation	
+	}
 }
