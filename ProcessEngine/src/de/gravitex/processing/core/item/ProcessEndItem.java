@@ -4,8 +4,8 @@ import de.gravitex.processing.core.ProcessItemType;
 
 public class ProcessEndItem extends ProcessItem {
 
-	public ProcessEndItem(String identifier) {
-		super(identifier);
+	public ProcessEndItem(String identifier, String description) {
+		super(identifier, description);
 	}
 	
 	public ProcessItemType getItemType() {

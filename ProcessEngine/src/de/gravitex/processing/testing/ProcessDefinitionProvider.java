@@ -1,5 +1,7 @@
 package de.gravitex.processing.testing;
 
+import org.apache.log4j.Logger;
+
 import de.gravitex.processing.core.ProcessContainer;
 import de.gravitex.processing.core.ProcessItemFactory;
 import de.gravitex.processing.core.ProcessItemType;
@@ -11,31 +13,33 @@ import de.gravitex.processing.testing.decision.DecisionForA2;
 import de.gravitex.processing.testing.decision.DecisionForA3;
 
 public class ProcessDefinitionProvider {
+	
+	private static Logger			logger					= Logger.getLogger(ProcessDefinitionProvider.class);
 
 	public static ProcessContainer getT4() {
 		
 		ProcessContainer processContainer = new ProcessContainer();
 		
 		try {
-			ProcessItem s1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "s1");
+			ProcessItem s1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "s1", null);
 			processContainer.addElement(s1);
 			
-			ProcessItem a1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a1");
+			ProcessItem a1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a1", null);
 			processContainer.addElement(a1);
 			
-			ProcessItem f1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "f1");
+			ProcessItem f1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "f1", null);
 			processContainer.addElement(f1);
 			
-			ProcessItem a2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a2");
+			ProcessItem a2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a2", null);
 			processContainer.addElement(a2);
 			
-			ProcessItem a3 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a3");
+			ProcessItem a3 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a3", null);
 			processContainer.addElement(a3);
 			
-			ProcessItem e1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e1");
+			ProcessItem e1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e1", null);
 			processContainer.addElement(e1);
 			
-			ProcessItem e2 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e2");
+			ProcessItem e2 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e2", null);
 			processContainer.addElement(e2);
 			
 			//parent relations
@@ -60,25 +64,25 @@ public class ProcessDefinitionProvider {
 		ProcessContainer processContainer = new ProcessContainer();
 		
 		try {
-			ProcessItem s1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "s1");
+			ProcessItem s1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "s1", null);
 			processContainer.addElement(s1);
 			
-			ProcessItem f1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "f1");
+			ProcessItem f1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "f1", null);
 			processContainer.addElement(f1);
 			
-			ProcessItem a1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a1");
+			ProcessItem a1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a1", null);
 			processContainer.addElement(a1);
 			
-			ProcessItem a2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a2");
+			ProcessItem a2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a2", null);
 			processContainer.addElement(a2);
 			
-			ProcessItem a3 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a3");
+			ProcessItem a3 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a3", null);
 			processContainer.addElement(a3);
 			
-			ProcessItem j1 = ProcessItemFactory.getProcessElement(ProcessItemType.JOIN, "j1");
+			ProcessItem j1 = ProcessItemFactory.getProcessElement(ProcessItemType.JOIN, "j1", null);
 			processContainer.addElement(j1);
 			
-			ProcessItem e1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e1");
+			ProcessItem e1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e1", null);
 			processContainer.addElement(e1);
 			
 			//parent relations
@@ -114,23 +118,23 @@ public class ProcessDefinitionProvider {
 		ProcessContainer processContainer = new ProcessContainer();
 		
 		try {
-			ProcessItem s1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "s1");
+			ProcessItem s1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "s1", null);
 			processContainer.addElement(s1);
 			
-			ProcessItem j1 = ProcessItemFactory.getProcessElement(ProcessItemType.JOIN, "j1");
+			ProcessItem j1 = ProcessItemFactory.getProcessElement(ProcessItemType.JOIN, "j1", null);
 			processContainer.addElement(j1);
-			ProcessItem a1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a1");
+			ProcessItem a1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a1", null);
 			processContainer.addElement(a1);
-			ProcessItem f1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "f1");
+			ProcessItem f1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "f1", null);
 			processContainer.addElement(f1);
-			ProcessItem a2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a2");
+			ProcessItem a2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a2", null);
 			processContainer.addElement(a2);
-			ProcessItem f2 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "f2");
+			ProcessItem f2 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "f2", null);
 			processContainer.addElement(f2);
 			
-			ProcessItem e1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e1");
+			ProcessItem e1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e1", null);
 			processContainer.addElement(e1);
-			ProcessItem e2 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e2");
+			ProcessItem e2 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e2", null);
 			processContainer.addElement(e2);
 			
 			//relations
@@ -153,5 +157,30 @@ public class ProcessDefinitionProvider {
 	public static ProcessContainer getT7() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public static ProcessContainer getHaftungsSumme() {
+		
+		ProcessContainer processContainer = new ProcessContainer();
+				
+		try {
+			ProcessItem start1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "start1", null);
+			processContainer.addElement(start1);
+			
+			ProcessItem acPrepareShare = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "acPrepareShare", "Dokumenten-Share vorbereiten");
+			processContainer.addElement(acPrepareShare);
+			
+			ProcessItem taCalculateDebitSum = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "taCalculateDebitSum", "Dokumenten-Share vorbereiten");
+			processContainer.addElement(acPrepareShare);
+			
+			//relations
+			processContainer.relateParent("acPrepareShare", "start1");
+			
+			return processContainer;
+			
+		} catch (ProcessException e) {
+			logger.error(e);
+			return null;
+		}			
 	}
 }

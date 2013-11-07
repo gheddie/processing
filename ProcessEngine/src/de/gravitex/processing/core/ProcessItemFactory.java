@@ -9,27 +9,27 @@ import de.gravitex.processing.core.item.ProcessStartItem;
 
 public class ProcessItemFactory {
 
-	public static ProcessItem getProcessElement(ProcessItemType processItemType, String identifier) {
+	public static ProcessItem getProcessElement(ProcessItemType processItemType, String identifier, String description) {
 		switch (processItemType) {
 		case START:
 			//------------------
-			return new ProcessStartItem(identifier);
+			return new ProcessStartItem(identifier, description);
 			//------------------
 		case ACTION:
 			//------------------
-			return new ProcessActionItem(identifier);
+			return new ProcessActionItem(identifier, description);
 			//------------------
 		case FORK:
 			//------------------
-			return new ProcessForkItem(identifier);
+			return new ProcessForkItem(identifier, description);
 			//------------------
 		case JOIN:
 			//------------------
-			return new ProcessJoinItem(identifier);
+			return new ProcessJoinItem(identifier, description);
 			//------------------
 		case END:
 			//------------------
-			return new ProcessEndItem(identifier);
+			return new ProcessEndItem(identifier, description);
 			//------------------
 		}
 		return null;

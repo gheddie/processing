@@ -9,14 +9,17 @@ public abstract class ProcessItem {
 
 	private String identifier;
 	
+	private String description;
+	
 	private Set<ProcessItem> followingItems;
 	
 	private Set<ProcessItem> parentItems;
 
-	public ProcessItem(String identifier) {
+	public ProcessItem(String identifier, String description) {
 		super();
 		init();
 		this.identifier = identifier;
+		this.description = description;
 	}
 
 	private void init() {
@@ -27,7 +30,7 @@ public abstract class ProcessItem {
 	public abstract ProcessItemType getItemType();
 
 	public String toString() {
-		return getClass().getSimpleName() + " [item type:"+getItemType()+"|identifier:"+identifier+"] ("+parentItems.size()+" parents)";
+		return "<<"+description+">> " + getClass().getSimpleName() + " [item type:"+getItemType()+"|identifier:"+identifier+"] ("+parentItems.size()+" parents)";
 	}
 
 	public String getIdentifier() {

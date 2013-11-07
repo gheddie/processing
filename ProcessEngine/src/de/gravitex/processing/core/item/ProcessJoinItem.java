@@ -4,8 +4,8 @@ import de.gravitex.processing.core.ProcessItemType;
 
 public class ProcessJoinItem extends ProcessItem {
 
-	public ProcessJoinItem(String identifier) {
-		super(identifier);
+	public ProcessJoinItem(String identifier, String description) {
+		super(identifier, description);
 	}
 
 	public ProcessItemType getItemType() {

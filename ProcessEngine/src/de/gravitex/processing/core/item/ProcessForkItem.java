@@ -15,8 +15,8 @@ public class ProcessForkItem extends ProcessItem {
 	
 	private HashMap<String, Class<? extends FlowDecision>> outlineConditions;
 
-	public ProcessForkItem(String identifier) {
-		super(identifier);
+	public ProcessForkItem(String identifier, String description) {
+		super(identifier, description);
 		outlineConditions = new HashMap<>();
 	}
 

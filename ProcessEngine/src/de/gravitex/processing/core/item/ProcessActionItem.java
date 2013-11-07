@@ -12,8 +12,8 @@ public class ProcessActionItem extends ProcessItem {
 
 	private Class<? extends FlowAction> actionClass;
 
-	public ProcessActionItem(String identifier) {
-		super(identifier);
+	public ProcessActionItem(String identifier, String description) {
+		super(identifier, description);
 	}
 
 	public ProcessItemType getItemType() {
