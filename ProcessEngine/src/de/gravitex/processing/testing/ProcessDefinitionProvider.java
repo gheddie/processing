@@ -200,6 +200,15 @@ public class ProcessDefinitionProvider {
 			ProcessItem fork2 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork2", null);
 			processContainer.addElement(fork2);
 			
+			ProcessItem writeHRDB = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "writeHRDB", null);
+			processContainer.addElement(writeHRDB);
+			
+			ProcessItem infoMail = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "infoMail", null);
+			processContainer.addElement(infoMail);
+			
+			ProcessItem end2 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end2", null);
+			processContainer.addElement(end2);
+			
 			//relations
 			processContainer.relateParent("gatherData", "start");
 			processContainer.relateParent("acknowledgeDataData", "gatherData");
@@ -213,6 +222,10 @@ public class ProcessDefinitionProvider {
 			processContainer.relateParent("join2", "fork1");
 			processContainer.relateParent("appoint", "join2");
 			processContainer.relateParent("fork2", "appoint");
+			
+			processContainer.relateParent("writeHRDB", "fork2");
+			processContainer.relateParent("infoMail", "writeHRDB");
+			processContainer.relateParent("end2", "infoMail");
 			
 			return processContainer;
 			
