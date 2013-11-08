@@ -13,6 +13,7 @@ import javax.swing.border.*;
 
 import de.gravitex.processing.core.ProcessContainer;
 import de.gravitex.processing.testing.ProcessDefinitionProvider;
+import de.gravitex.processing.testing.ProcessSingleton;
 
 /**
  * @author User #1
@@ -42,7 +43,25 @@ public class TestApplianceGUI extends JFrame {
 		
 		opInteresting.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("interesting");
+				ProcessSingleton.getInstance().setInterest(Interest.HIGH);
+			}
+		});
+		
+		opPotentiallyInteresting.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ProcessSingleton.getInstance().setInterest(Interest.POTENTIALLY);
+			}
+		});
+		
+		opNotInteresting.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ProcessSingleton.getInstance().setInterest(Interest.NONE);
+			}
+		});
+		
+		btnStep.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				processContainer.singleStep();
 			}
 		});
 	}

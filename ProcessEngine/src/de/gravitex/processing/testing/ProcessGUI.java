@@ -28,7 +28,7 @@ public class ProcessGUI extends JFrame {
 		btnProceed.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				while (true) {
-					processContainer.proceed();	
+					processContainer.singleStep();	
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e1) {

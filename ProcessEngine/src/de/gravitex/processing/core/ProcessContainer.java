@@ -58,8 +58,8 @@ public class ProcessContainer {
 		processElements.put(processElement.getIdentifier(), processElement);
 	}
 
-	public void proceed() {
-		logger.trace("proceeding...");
+	public void singleStep() {
+		logger.trace("stepping...");
 		Set<ProcessItem> newItemsInControl = new HashSet<>();
 		for (ProcessItem item : itemsInControl) {
 			newItemsInControl.addAll(item.getFollowingItems());

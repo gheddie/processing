@@ -8,6 +8,9 @@ import de.gravitex.processing.core.ProcessItemType;
 import de.gravitex.processing.core.exception.ProcessException;
 import de.gravitex.processing.core.item.ProcessItem;
 import de.gravitex.processing.testing.action.ActionA2;
+import de.gravitex.processing.testing.appliance.decision.DecisionInterestHigh;
+import de.gravitex.processing.testing.appliance.decision.DecisionInterestNone;
+import de.gravitex.processing.testing.appliance.decision.DecisionInterestPotentially;
 import de.gravitex.processing.testing.decision.DecisionForA1;
 import de.gravitex.processing.testing.decision.DecisionForA2;
 import de.gravitex.processing.testing.decision.DecisionForA3;
@@ -276,6 +279,11 @@ public class ProcessDefinitionProvider {
 			processContainer.relateParent("confStoreData", "fork3");
 			processContainer.relateParent("storeDataPot", "confStoreData");
 			processContainer.relateParent("end4", "storeDataPot");
+			
+			//conditions
+			processContainer.addCondition("fork1", "join1", DecisionInterestNone.class);
+			processContainer.addCondition("fork1", "askStoreData", DecisionInterestPotentially.class);
+			processContainer.addCondition("fork1", "join2", DecisionInterestHigh.class);
 			
 			return processContainer;
 			
