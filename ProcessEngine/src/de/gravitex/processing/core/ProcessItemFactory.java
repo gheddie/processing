@@ -6,6 +6,7 @@ import de.gravitex.processing.core.item.ProcessForkItem;
 import de.gravitex.processing.core.item.ProcessItem;
 import de.gravitex.processing.core.item.ProcessJoinItem;
 import de.gravitex.processing.core.item.ProcessStartItem;
+import de.gravitex.processing.core.item.ProcessTaskItem;
 
 public class ProcessItemFactory {
 
@@ -19,6 +20,10 @@ public class ProcessItemFactory {
 			//------------------
 			return new ProcessActionItem(identifier, description);
 			//------------------
+		case TASK:
+			//------------------
+			return new ProcessTaskItem(identifier, description);
+			//------------------			
 		case FORK:
 			//------------------
 			return new ProcessForkItem(identifier, description);

@@ -32,6 +32,14 @@ public class ProcessContainer {
 	}
 
 	public void addElement(ProcessItem processElement) throws ProcessException {
+		
+		if (processElement == null) {
+			throw new ProcessException("process element must not be NULL!");
+		}
+		
+		if ((processElement.getIdentifier() == null) || (processElement.getIdentifier().length() == 0)) {
+			throw new ProcessException("process element must have an identifier!");
+		}
 
 		if (processElements.size() == 0) {
 			if (processElement.getItemType().equals(ProcessItemType.START)) {
@@ -39,6 +47,10 @@ public class ProcessContainer {
 				itemsInControl.add(processElement);
 			} else {
 				throw new ProcessException("process must start with START element!");
+			}
+		} else {
+			if (processElements.get(processElement.getIdentifier()) != null) {
+				throw new ProcessException("duplicate identifier '"+processElement.getIdentifier()+"' detected.");
 			}
 		}
 

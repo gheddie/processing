@@ -158,6 +158,69 @@ public class ProcessDefinitionProvider {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public static ProcessContainer getBewerbung() {
+		
+		ProcessContainer processContainer = new ProcessContainer();
+		
+		try {
+			ProcessItem start1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "start", null);
+			processContainer.addElement(start1);
+			
+			ProcessItem gatherData = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "gatherData", null);
+			processContainer.addElement(gatherData);
+			
+			ProcessItem acknowledgeDataData = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "acknowledgeDataData", null);
+			processContainer.addElement(acknowledgeDataData);
+			
+			ProcessItem sightData = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "sightData", null);
+			processContainer.addElement(sightData);
+			
+			ProcessItem fork1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork1", null);
+			processContainer.addElement(fork1);
+			
+			ProcessItem join1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "join1", null);
+			processContainer.addElement(join1);
+			
+			ProcessItem deleteData1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "deleteData1", null);
+			processContainer.addElement(deleteData1);
+			
+			ProcessItem revoke = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "revoke", null);
+			processContainer.addElement(revoke);
+			
+			ProcessItem end1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end1", null);
+			processContainer.addElement(end1);
+			
+			ProcessItem join2 = ProcessItemFactory.getProcessElement(ProcessItemType.JOIN, "join2", null);
+			processContainer.addElement(join2);
+			
+			ProcessItem appoint = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "appoint", null);
+			processContainer.addElement(appoint);
+			
+			ProcessItem fork2 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork2", null);
+			processContainer.addElement(fork2);
+			
+			//relations
+			processContainer.relateParent("gatherData", "start");
+			processContainer.relateParent("acknowledgeDataData", "gatherData");
+			processContainer.relateParent("sightData", "acknowledgeDataData");
+			processContainer.relateParent("fork1", "sightData");
+			processContainer.relateParent("join1", "fork1");
+			processContainer.relateParent("deleteData1", "join1");
+			processContainer.relateParent("revoke", "deleteData1");
+			processContainer.relateParent("end1", "revoke");
+			
+			processContainer.relateParent("join2", "fork1");
+			processContainer.relateParent("appoint", "join2");
+			processContainer.relateParent("fork2", "appoint");
+			
+			return processContainer;
+			
+		} catch (ProcessException e) {
+			logger.error(e);
+			return null;
+		}
+	}
 
 	public static ProcessContainer getHaftungsSumme() {
 		

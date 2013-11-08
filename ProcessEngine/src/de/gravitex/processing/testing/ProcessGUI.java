@@ -47,7 +47,9 @@ public class ProcessGUI extends JFrame {
 		
 		// processContainer = ProcessDefinitionProvider.getT7();
 		
-		processContainer = ProcessDefinitionProvider.getHaftungsSumme();
+		// processContainer = ProcessDefinitionProvider.getHaftungsSumme();
+		
+		processContainer = ProcessDefinitionProvider.getBewerbung();
 	}
 
 	// ---

@@ -40,8 +40,13 @@ public class ProcessForkItem extends ProcessItem {
 
 	private boolean checkOutlineCondition(ProcessItem processItem) {
 		logger.info("checking outline condition for process item : "+processItem+".");
-		try {
-			boolean conditionValid = ((Class<? extends FlowDecision>) outlineConditions.get(processItem.getIdentifier())).newInstance().conditionValid();
+		Class<? extends FlowDecision> conditionClass = (Class<? extends FlowDecision>) outlineConditions.get(processItem.getIdentifier());
+		if (conditionClass == null) {
+			//no condition provided, so outline is valid
+			return true;
+		}
+		try {			
+			boolean conditionValid = conditionClass.newInstance().conditionValid();
 			if (conditionValid) {
 				logger.trace("condition valid for item identifier '"+processItem.getIdentifier()+"'...");
 			} else {
