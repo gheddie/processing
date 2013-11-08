@@ -7,6 +7,7 @@ import de.gravitex.processing.core.item.ProcessItem;
 import de.gravitex.processing.core.item.ProcessJoinItem;
 import de.gravitex.processing.core.item.ProcessStartItem;
 import de.gravitex.processing.core.item.ProcessTaskItem;
+import de.gravitex.processing.core.item.ProcessWaitItem;
 
 public class ProcessItemFactory {
 
@@ -32,6 +33,10 @@ public class ProcessItemFactory {
 			//------------------
 			return new ProcessJoinItem(identifier, description);
 			//------------------
+		case WAIT:
+			//------------------
+			return new ProcessWaitItem(identifier, description);
+			//------------------			
 		case END:
 			//------------------
 			return new ProcessEndItem(identifier, description);

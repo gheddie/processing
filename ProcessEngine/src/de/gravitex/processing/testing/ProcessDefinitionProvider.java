@@ -227,6 +227,21 @@ public class ProcessDefinitionProvider {
 			ProcessItem end3 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end3", null);
 			processContainer.addElement(end3);
 			
+			ProcessItem fork4 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork4", null);
+			processContainer.addElement(fork4);
+			
+			ProcessItem wait1 = ProcessItemFactory.getProcessElement(ProcessItemType.WAIT, "wait1", null);
+			processContainer.addElement(wait1);
+			
+			ProcessItem confStoreData = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "confStoreData", null);
+			processContainer.addElement(confStoreData);
+			
+			ProcessItem storeDataPot = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "storeDataPot", null);
+			processContainer.addElement(storeDataPot);
+			
+			ProcessItem end4 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end4", null);
+			processContainer.addElement(end4);
+			
 			//relations
 			processContainer.relateParent("gatherData", "start");
 			processContainer.relateParent("acknowledgeData", "gatherData");
@@ -251,6 +266,16 @@ public class ProcessDefinitionProvider {
 			processContainer.relateParent("ackNoStorage", "fork3");
 			processContainer.relateParent("deleteData2", "ackNoStorage");
 			processContainer.relateParent("end3", "deleteData2");
+			
+			processContainer.relateParent("fork4", "fork2");
+			processContainer.relateParent("wait1", "fork4");
+			
+			processContainer.relateParent("join1", "fork4");
+			processContainer.relateParent("join2", "wait1");
+			
+			processContainer.relateParent("confStoreData", "fork3");
+			processContainer.relateParent("storeDataPot", "confStoreData");
+			processContainer.relateParent("end4", "storeDataPot");
 			
 			return processContainer;
 			
