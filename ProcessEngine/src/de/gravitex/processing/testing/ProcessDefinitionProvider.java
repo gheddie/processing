@@ -170,8 +170,8 @@ public class ProcessDefinitionProvider {
 			ProcessItem gatherData = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "gatherData", null);
 			processContainer.addElement(gatherData);
 			
-			ProcessItem acknowledgeDataData = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "acknowledgeDataData", null);
-			processContainer.addElement(acknowledgeDataData);
+			ProcessItem acknowledgeData = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "acknowledgeData", null);
+			processContainer.addElement(acknowledgeData);
 			
 			ProcessItem sightData = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "sightData", null);
 			processContainer.addElement(sightData);
@@ -209,10 +209,28 @@ public class ProcessDefinitionProvider {
 			ProcessItem end2 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end2", null);
 			processContainer.addElement(end2);
 			
+			ProcessItem askStoreData = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "askStoreData", null);
+			processContainer.addElement(askStoreData);
+			
+			ProcessItem storeAnswer = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "storeAnswer", null);
+			processContainer.addElement(storeAnswer);
+			
+			ProcessItem fork3 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork3", null);
+			processContainer.addElement(fork3);
+			
+			ProcessItem ackNoStorage = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ackNoStorage", null);
+			processContainer.addElement(ackNoStorage);
+			
+			ProcessItem deleteData2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "deleteData2", null);
+			processContainer.addElement(deleteData2);
+			
+			ProcessItem end3 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end3", null);
+			processContainer.addElement(end3);
+			
 			//relations
 			processContainer.relateParent("gatherData", "start");
-			processContainer.relateParent("acknowledgeDataData", "gatherData");
-			processContainer.relateParent("sightData", "acknowledgeDataData");
+			processContainer.relateParent("acknowledgeData", "gatherData");
+			processContainer.relateParent("sightData", "acknowledgeData");
 			processContainer.relateParent("fork1", "sightData");
 			processContainer.relateParent("join1", "fork1");
 			processContainer.relateParent("deleteData1", "join1");
@@ -226,6 +244,13 @@ public class ProcessDefinitionProvider {
 			processContainer.relateParent("writeHRDB", "fork2");
 			processContainer.relateParent("infoMail", "writeHRDB");
 			processContainer.relateParent("end2", "infoMail");
+			
+			processContainer.relateParent("askStoreData", "fork1");
+			processContainer.relateParent("storeAnswer", "askStoreData");
+			processContainer.relateParent("fork3", "storeAnswer");
+			processContainer.relateParent("ackNoStorage", "fork3");
+			processContainer.relateParent("deleteData2", "ackNoStorage");
+			processContainer.relateParent("end3", "deleteData2");
 			
 			return processContainer;
 			
