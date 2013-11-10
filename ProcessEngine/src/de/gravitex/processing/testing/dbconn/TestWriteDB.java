@@ -1,5 +1,7 @@
 package de.gravitex.processing.testing.dbconn;
 
+import java.util.Date;
+
 import org.apache.log4j.PropertyConfigurator;
 
 import de.gravitex.processing.core.ProcessState;
@@ -15,14 +17,24 @@ public class TestWriteDB {
 		//PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
 		PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
 		
-//		testWriteProcess();
+		testWriteProcess();
 //		testLoadProcess();
-		testWriteTask();
+//		testWriteTask();
+//		testLoadTasks();
+//		testLoadTask();
+	}
+
+	private static void testLoadTask() {
+		System.out.println(ProcessDAO.loadTask(8l));
+	}
+
+	private static void testLoadTasks() {
+		System.out.println(ProcessDAO.loadTasksByProcess(ProcessDAO.loadProcessInstance(6l)).size());
 	}
 
 	private static void testWriteTask() {
 		ProcessTask task = new ProcessTask();
-		task.setName("test_task");
+		task.setName("test_task2");
 		ProcessDAO.writeProcessTask(ProcessDAO.loadProcessInstance(6l), task);
 	}
 
@@ -34,6 +46,7 @@ public class TestWriteDB {
 		ProcessEntity process = new ProcessEntity();
 		process.setName("test_process");
 		process.setState(ProcessState.RUNNING);
+		process.setCreationDate(new Date());
 		ProcessDAO.writeProcessInstance(process);
 	}
 }

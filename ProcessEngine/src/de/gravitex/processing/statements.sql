@@ -4,6 +4,7 @@ CREATE TABLE process_instance (
 	id INTEGER DEFAULT NEXTVAL('processing_id_seq'),
 	name VARCHAR(32),
 	state VARCHAR(32),
+	creationDate timestamp,
 	primary key (id)
 	);
 	
