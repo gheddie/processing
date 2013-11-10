@@ -27,14 +27,18 @@ public class ProcessGUI extends JFrame {
 		btnProceed = new JButton("proceed");
 		btnProceed.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				while (true) {
-					processContainer.singleStep();	
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					}
-				}				
+				processContainer.startProcess();
+				//---
+//				processContainer.singleStep();
+				//---
+//				while (true) {
+//					processContainer.singleStep();	
+//					try {
+//						Thread.sleep(100);
+//					} catch (InterruptedException e1) {
+//						e1.printStackTrace();
+//					}
+//				}				
 			}
 		});
 		add(btnProceed, BorderLayout.SOUTH);
@@ -56,7 +60,9 @@ public class ProcessGUI extends JFrame {
 		
 		// processContainer = ProcessDefinitionProvider.getHaftungsSumme();
 		
-		processContainer = ProcessDefinitionProvider.getBewerbung();
+		// processContainer = ProcessDefinitionProvider.getBewerbung();
+		
+		processContainer = ProcessDefinitionProvider.getReferenceProcess();
 	}
 
 	// ---
@@ -66,8 +72,8 @@ public class ProcessGUI extends JFrame {
 	public static void main(String[] args) {
 		
 		//log4j
-		PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
-		//PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
+		//PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
+		PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
 		
 		//start process gui
 		new ProcessGUI();

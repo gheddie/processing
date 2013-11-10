@@ -61,7 +61,7 @@ public class TestApplianceGUI extends JFrame {
 		
 		btnStep.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				processContainer.singleStep();
+//				processContainer.singleStep();
 			}
 		});
 	}

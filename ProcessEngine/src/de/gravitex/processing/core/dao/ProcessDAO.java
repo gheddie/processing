@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -31,6 +32,14 @@ public class ProcessDAO {
 	private static final int TASK_COLUMN_INDEX_ID = 1;
 	private static final int TASK_COLUMN_INDEX_NAME = 2;
 	private static final int TASK_COLUMN_INDEX_PROCESS_REF = 3;
+	
+	public static void writeProcessInstance(String name, ProcessState processState, Date creationDate) {
+		ProcessEntity process = new ProcessEntity();
+		process.setName(name);
+		process.setState(processState);
+		process.setCreationDate(creationDate);
+		writeProcessInstance(process );
+	}
 
 	public static void writeProcessInstance(ProcessEntity process) {
 		Connection cn = null;

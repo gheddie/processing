@@ -1,11 +1,13 @@
 package de.gravitex.processing.core;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import de.gravitex.processing.core.dao.ProcessDAO;
 import de.gravitex.processing.core.exception.ProcessException;
 import de.gravitex.processing.core.item.ProcessActionItem;
 import de.gravitex.processing.core.item.ProcessForkItem;
@@ -58,7 +60,7 @@ public class ProcessContainer {
 		processElements.put(processElement.getIdentifier(), processElement);
 	}
 
-	public void singleStep() {
+	private void singleStep() {
 		logger.trace("stepping...");
 		Set<ProcessItem> newItemsInControl = new HashSet<>();
 		for (ProcessItem item : itemsInControl) {
@@ -107,5 +109,21 @@ public class ProcessContainer {
 
 	public void addAction(String itemIdentifier, Class<? extends FlowAction> actionClass) {
 		((ProcessActionItem) processElements.get(itemIdentifier)).setActionClass(actionClass);		
+	}
+
+	public void startProcess() {
+		ProcessDAO.writeProcessInstance("klaus", ProcessState.RUNNING, new Date());
+		try {
+			while (!(allItemsInControlBlocking())) {
+				singleStep();
+				Thread.sleep(2500);
+			}	
+		} catch (InterruptedException e) {
+			logger.error(e);
+		}
+	}
+
+	private boolean allItemsInControlBlocking() {
+		return false;
 	}
 }

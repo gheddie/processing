@@ -324,22 +324,57 @@ public class ProcessDefinitionProvider {
 		
 		try {
 			ProcessItem start = ProcessItemFactory.getProcessElement(ProcessItemType.START, "start", null);
+			processContainer.addElement(start);
 			ProcessItem itemA = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "itemA", null);
+			processContainer.addElement(itemA);
 			ProcessItem itemB = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "itemB", null);
+			processContainer.addElement(itemB);
 			ProcessItem fork1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork1", null);
+			processContainer.addElement(fork1);
 			ProcessItem timer1 = ProcessItemFactory.getProcessElement(ProcessItemType.WAIT, "timer1", null);
+			processContainer.addElement(timer1);
 			ProcessItem itemC = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "itemC", null);
+			processContainer.addElement(itemC);
 			ProcessItem itemD = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "itemD", null);
+			processContainer.addElement(itemD);
 			ProcessItem itemE = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "itemE", null);
+			processContainer.addElement(itemE);
 			ProcessItem fork2 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "fork2", null);
+			processContainer.addElement(fork2);
 			ProcessItem timer2 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "timer2", null);
+			processContainer.addElement(timer2);
 			ProcessItem itemF = ProcessItemFactory.getProcessElement(ProcessItemType.START, "itemF", null);
+			processContainer.addElement(itemF);
 			ProcessItem itemG = ProcessItemFactory.getProcessElement(ProcessItemType.START, "itemG", null);
+			processContainer.addElement(itemG);
 			ProcessItem join1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "join1", null);
+			processContainer.addElement(join1);
 			ProcessItem end1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "end1", null);
-			
+			processContainer.addElement(end1);
 			ProcessItem end2 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "end2", null);
 			processContainer.addElement(end2);
+			
+			//relations
+			processContainer.relateParent("itemA", "start");
+			processContainer.relateParent("itemB", "itemA");
+			processContainer.relateParent("fork1", "itemB");
+			
+			processContainer.relateParent("itemC", "fork1");
+			processContainer.relateParent("itemD", "itemC");
+			processContainer.relateParent("timer1", "fork1");
+			processContainer.relateParent("itemE", "timer1");
+			processContainer.relateParent("end1", "itemD");
+			
+			processContainer.relateParent("fork2", "itemE");
+			
+			processContainer.relateParent("itemF", "fork2");
+			processContainer.relateParent("timer2", "fork2");
+			processContainer.relateParent("itemG", "timer2");
+			
+			processContainer.relateParent("join1", "itemF");
+			processContainer.relateParent("join1", "itemG");
+			
+			processContainer.relateParent("end2", "join1");
 			
 			return processContainer;
 			
