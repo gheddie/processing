@@ -317,4 +317,35 @@ public class ProcessDefinitionProvider {
 			return null;
 		}			
 	}
+	
+	public static ProcessContainer getReferenceProcess() {
+		
+		ProcessContainer processContainer = new ProcessContainer();
+		
+		try {
+			ProcessItem start = ProcessItemFactory.getProcessElement(ProcessItemType.START, "start", null);
+			ProcessItem itemA = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "itemA", null);
+			ProcessItem itemB = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "itemB", null);
+			ProcessItem fork1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork1", null);
+			ProcessItem timer1 = ProcessItemFactory.getProcessElement(ProcessItemType.WAIT, "timer1", null);
+			ProcessItem itemC = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "itemC", null);
+			ProcessItem itemD = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "itemD", null);
+			ProcessItem itemE = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "itemE", null);
+			ProcessItem fork2 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "fork2", null);
+			ProcessItem timer2 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "timer2", null);
+			ProcessItem itemF = ProcessItemFactory.getProcessElement(ProcessItemType.START, "itemF", null);
+			ProcessItem itemG = ProcessItemFactory.getProcessElement(ProcessItemType.START, "itemG", null);
+			ProcessItem join1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "join1", null);
+			ProcessItem end1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "end1", null);
+			
+			ProcessItem end2 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "end2", null);
+			processContainer.addElement(end2);
+			
+			return processContainer;
+			
+		} catch (ProcessException e) {
+			logger.error(e);
+			return null;
+		}
+	}
 }
