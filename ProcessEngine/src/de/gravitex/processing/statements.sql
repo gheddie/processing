@@ -6,3 +6,12 @@ CREATE TABLE process_instance (
 	state VARCHAR(32),
 	primary key (id)
 	);
+	
+CREATE TABLE process_task (
+	id INTEGER DEFAULT NEXTVAL('processing_id_seq'),
+	name VARCHAR(32),
+	processId INTEGER,
+	primary key (id)
+	);
+
+ALTER TABLE process_task ADD FOREIGN KEY (processId) REFERENCES process_instance (id);

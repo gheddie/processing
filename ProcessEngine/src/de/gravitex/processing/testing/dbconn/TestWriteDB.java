@@ -1,41 +1,39 @@
 package de.gravitex.processing.testing.dbconn;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
-
-import org.postgresql.Driver;
+import org.apache.log4j.PropertyConfigurator;
 
 import de.gravitex.processing.core.ProcessState;
+import de.gravitex.processing.core.dao.ProcessDAO;
+import de.gravitex.processing.core.dao.ProcessEntity;
+import de.gravitex.processing.core.dao.ProcessTask;
 
 public class TestWriteDB {
 
 	public static void main(String[] args) {
-		writeProcessInstance("test123", ProcessState.RUNNING);
+		
+		//log4j
+		//PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
+		PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
+		
+//		testWriteProcess();
+//		testLoadProcess();
+		testWriteTask();
 	}
 
-	static void writeProcessInstance(String processName, ProcessState processState) {
-		Connection cn = null;
-		Statement st = null;
-		try {
-			// Select fitting database driver and connect:
-			Class.forName(Driver.class.getCanonicalName());
-			cn = DriverManager.getConnection("jdbc:postgresql://localhost/processing", "postgres", "pgvedder");
-			st = cn.createStatement();
-			st.executeUpdate("insert into process_instance (name, state) values ('"+processName+"', '"+processState+"')");
-		} catch (Exception ex) {
-			System.out.println(ex);
-		} finally {
-			try {
-				if (st != null)
-					st.close();
-			} catch (Exception ex) {/* nothing to do */
-			}
-			try {
-				if (cn != null)
-					cn.close();
-			} catch (Exception ex) {/* nothing to do */
-			}
-		}
+	private static void testWriteTask() {
+		ProcessTask task = new ProcessTask();
+		task.setName("test_task");
+		ProcessDAO.writeProcessTask(ProcessDAO.loadProcessInstance(6l), task);
+	}
+
+	private static void testLoadProcess() {
+		System.out.println(ProcessDAO.loadProcessInstance(4l));
+	}
+
+	private static void testWriteProcess() {
+		ProcessEntity process = new ProcessEntity();
+		process.setName("test_process");
+		process.setState(ProcessState.RUNNING);
+		ProcessDAO.writeProcessInstance(process);
 	}
 }
