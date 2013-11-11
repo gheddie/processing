@@ -11,4 +11,8 @@ public class ProcessStartItem extends ProcessItem {
 	public ProcessItemType getItemType() {
 		return ProcessItemType.START;
 	}
+	
+	public boolean isBlocking() {
+		return false;
+	}
 }

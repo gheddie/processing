@@ -33,24 +33,28 @@ public class ProcessDAO {
 	private static final int TASK_COLUMN_INDEX_NAME = 2;
 	private static final int TASK_COLUMN_INDEX_PROCESS_REF = 3;
 	
-	public static void writeProcessInstance(String name, ProcessState processState, Date creationDate) {
+	public static int writeProcessInstance(String name, ProcessState processState, Date creationDate) {
 		ProcessEntity process = new ProcessEntity();
 		process.setName(name);
 		process.setState(processState);
 		process.setCreationDate(creationDate);
-		writeProcessInstance(process );
+		return writeProcessInstance(process);
 	}
 
-	public static void writeProcessInstance(ProcessEntity process) {
+	public static int writeProcessInstance(ProcessEntity process) {
 		Connection cn = null;
 		Statement st = null;
+		int processId = -1;
 		try {
 			cn = getConnection();
 			st = cn.createStatement();
-			String sql = "insert into process_instance (name, state, creationDate) values ('" + process.getName() + "', '" + process.getState() + "', '" + DAOUtils.formatDateForDB(process.getCreationDate()) + "')";
+			processId = getSequenceVal();
+			String sql = "insert into process_instance (id, name, state, creationDate) values ("+processId+", '" + process.getName() + "', '" + process.getState() + "', '" + DAOUtils.formatDateForDB(process.getCreationDate()) + "')";
 			st.executeUpdate(sql);
+			return processId;
 		} catch (Exception e) {
 			logger.error(e);
+			return -1;
 		}
 	}
 
@@ -73,13 +77,13 @@ public class ProcessDAO {
 		}
 	}
 
-	public static void writeProcessTask(ProcessEntity processInstance, ProcessTask task) {
+	public static void writeProcessTask(int processId, ProcessTask task) {
 		Connection cn = null;
 		Statement st = null;
 		try {
 			cn = getConnection();
 			st = cn.createStatement();
-			String sql = "insert into process_task (name, processId) values ('" + task.getName() + "', '" + processInstance.getId() + "')";
+			String sql = "insert into process_task (name, processId) values ('" + task.getName() + "', '" + processId + "')";
 			st.executeUpdate(sql);
 		} catch (Exception e) {
 			logger.error(e);
@@ -120,6 +124,25 @@ public class ProcessDAO {
 		} catch (Exception e) {
 			logger.error(e);
 			return null;
+		}
+	}
+	
+	public static int getSequenceVal() {
+		Connection cn = null;
+		Statement st = null;
+		try {
+			cn = getConnection();
+			st = cn.createStatement();
+			String sql = "SELECT nextval('processing_id_seq')";
+			ResultSet rs = st.executeQuery(sql);
+			if (rs.next()) {
+				return rs.getInt("nextval");
+			} else {
+				return -1;
+			}
+		} catch (Exception e) {
+			logger.error(e);
+			return -1;
 		}
 	}
 

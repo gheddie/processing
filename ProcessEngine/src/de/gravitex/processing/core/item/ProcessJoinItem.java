@@ -11,4 +11,8 @@ public class ProcessJoinItem extends ProcessItem {
 	public ProcessItemType getItemType() {
 		return ProcessItemType.JOIN;
 	}
+	
+	public boolean isBlocking() {
+		return false;
+	}
 }

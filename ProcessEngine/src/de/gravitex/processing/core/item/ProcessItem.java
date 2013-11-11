@@ -52,4 +52,6 @@ public abstract class ProcessItem {
 	public void gainControl() {
 		// empty base implementation	
 	}
+	
+	public abstract boolean isBlocking();
 }

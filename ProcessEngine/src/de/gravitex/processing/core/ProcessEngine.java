@@ -8,6 +8,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import de.gravitex.processing.core.dao.ProcessDAO;
+import de.gravitex.processing.core.dao.ProcessTask;
 import de.gravitex.processing.core.exception.ProcessException;
 import de.gravitex.processing.core.item.ProcessActionItem;
 import de.gravitex.processing.core.item.ProcessForkItem;
@@ -15,15 +16,17 @@ import de.gravitex.processing.core.item.ProcessItem;
 import de.gravitex.processing.core.logic.FlowAction;
 import de.gravitex.processing.core.logic.FlowDecision;
 
-public class ProcessContainer {
+public class ProcessEngine {
 	
-	private static Logger			logger					= Logger.getLogger(ProcessContainer.class);
+	private static Logger			logger					= Logger.getLogger(ProcessEngine.class);
 
 	private HashMap<String, ProcessItem> processElements;
 
 	private Set<ProcessItem> itemsInControl;
 
-	public ProcessContainer() {
+	private int processId;
+
+	public ProcessEngine() {
 		super();
 		init();
 	}
@@ -110,20 +113,39 @@ public class ProcessContainer {
 	public void addAction(String itemIdentifier, Class<? extends FlowAction> actionClass) {
 		((ProcessActionItem) processElements.get(itemIdentifier)).setActionClass(actionClass);		
 	}
+	
+	public void resumeProcess() {
+		//...
+	}
 
 	public void startProcess() {
-		ProcessDAO.writeProcessInstance("klaus", ProcessState.RUNNING, new Date());
+		processId = ProcessDAO.writeProcessInstance("klaus", ProcessState.RUNNING, new Date());
 		try {
 			while (!(allItemsInControlBlocking())) {
 				singleStep();
 				Thread.sleep(2500);
-			}	
+			}
+			persistActualProcessState();
 		} catch (InterruptedException e) {
 			logger.error(e);
 		}
 	}
 
+	private void persistActualProcessState() {
+		ProcessTask task = null;
+		for (ProcessItem item : itemsInControl) {
+			task = new ProcessTask();
+			task.setName(item.getIdentifier());
+			ProcessDAO.writeProcessTask(processId, task);
+		}
+	}
+
 	private boolean allItemsInControlBlocking() {
-		return false;
+		for (ProcessItem item : itemsInControl) {
+			if (!(item.isBlocking())) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

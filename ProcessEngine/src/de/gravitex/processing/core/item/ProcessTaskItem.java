@@ -11,4 +11,8 @@ public class ProcessTaskItem extends ProcessItem {
 	public ProcessItemType getItemType() {
 		return ProcessItemType.TASK;
 	}
+	
+	public boolean isBlocking() {
+		return true;
+	}
 }

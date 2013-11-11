@@ -58,4 +58,8 @@ public class ProcessForkItem extends ProcessItem {
 			return false;
 		}
 	}
+	
+	public boolean isBlocking() {
+		return false;
+	}
 }

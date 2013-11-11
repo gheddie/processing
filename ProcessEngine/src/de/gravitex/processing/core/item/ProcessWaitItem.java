@@ -11,4 +11,8 @@ public class ProcessWaitItem extends ProcessItem {
 	public ProcessItemType getItemType() {
 		return ProcessItemType.WAIT;
 	}
+	
+	public boolean isBlocking() {
+		return false;
+	}
 }

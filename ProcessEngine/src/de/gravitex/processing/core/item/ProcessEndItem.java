@@ -11,4 +11,8 @@ public class ProcessEndItem extends ProcessItem {
 	public ProcessItemType getItemType() {
 		return ProcessItemType.END;
 	}
+	
+	public boolean isBlocking() {
+		return false;
+	}
 }

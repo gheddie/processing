@@ -9,19 +9,24 @@ import de.gravitex.processing.core.dao.ProcessDAO;
 import de.gravitex.processing.core.dao.ProcessEntity;
 import de.gravitex.processing.core.dao.ProcessTask;
 
-public class TestWriteDB {
+public class TestDBFuncs {
 
 	public static void main(String[] args) {
 		
 		//log4j
-		//PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
-		PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
+		PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
+		//PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
 		
-		testWriteProcess();
+//		testWriteProcess();
 //		testLoadProcess();
 //		testWriteTask();
 //		testLoadTasks();
 //		testLoadTask();
+		testGetNextSequenceValue();
+	}
+
+	private static void testGetNextSequenceValue() {
+		System.out.println(ProcessDAO.getSequenceVal());
 	}
 
 	private static void testLoadTask() {
@@ -35,7 +40,7 @@ public class TestWriteDB {
 	private static void testWriteTask() {
 		ProcessTask task = new ProcessTask();
 		task.setName("test_task2");
-		ProcessDAO.writeProcessTask(ProcessDAO.loadProcessInstance(6l), task);
+		ProcessDAO.writeProcessTask(6, task);
 	}
 
 	private static void testLoadProcess() {

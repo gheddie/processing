@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 
 import org.apache.log4j.PropertyConfigurator;
 
-import de.gravitex.processing.core.ProcessContainer;
+import de.gravitex.processing.core.ProcessEngine;
 import de.gravitex.processing.testing.ProcessDefinitionProvider;
 
 public class ProcessGUI extends JFrame {
@@ -17,7 +17,7 @@ public class ProcessGUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private JButton btnProceed;
-	private ProcessContainer processContainer;
+	private ProcessEngine processContainer;
 
 	public ProcessGUI() {
 		super();
@@ -62,7 +62,11 @@ public class ProcessGUI extends JFrame {
 		
 		// processContainer = ProcessDefinitionProvider.getBewerbung();
 		
-		processContainer = ProcessDefinitionProvider.getReferenceProcess();
+		// processContainer = ProcessDefinitionProvider.getReferenceProcess();
+		
+		// processContainer = ProcessDefinitionProvider.getReferenceProcessFromWork();
+		
+		processContainer = ProcessDefinitionProvider.getLinearProcess();
 	}
 
 	// ---
@@ -72,8 +76,8 @@ public class ProcessGUI extends JFrame {
 	public static void main(String[] args) {
 		
 		//log4j
-		//PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
-		PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
+		PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
+		//PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
 		
 		//start process gui
 		new ProcessGUI();

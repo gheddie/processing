@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.border.*;
 
-import de.gravitex.processing.core.ProcessContainer;
+import de.gravitex.processing.core.ProcessEngine;
 import de.gravitex.processing.testing.ProcessDefinitionProvider;
 import de.gravitex.processing.testing.ProcessSingleton;
 
@@ -22,7 +22,7 @@ public class TestApplianceGUI extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 
-	private ProcessContainer processContainer;
+	private ProcessEngine processContainer;
 	
 	private ButtonGroup bgInterest;
 	

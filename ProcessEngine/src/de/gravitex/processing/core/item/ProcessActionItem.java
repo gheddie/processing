@@ -34,4 +34,8 @@ public class ProcessActionItem extends ProcessItem {
 			}	
 		}
 	}
+
+	public boolean isBlocking() {
+		return false;
+	}
 }
