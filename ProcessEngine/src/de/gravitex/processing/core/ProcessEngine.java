@@ -73,7 +73,7 @@ public class ProcessEngine {
 		for (ProcessItem item : itemsInControl) {
 			item.gainControl();
 		}
-		debugControl();
+//		debugControl();
 	}
 
 	private void debugControl() {
@@ -114,8 +114,27 @@ public class ProcessEngine {
 		((ProcessActionItem) processElements.get(itemIdentifier)).setActionClass(actionClass);		
 	}
 	
-	public void resumeProcess() {
-		//...
+	public void resumeProcess(int processIdToResume, String itemIdentifierToResume) {
+		processId = processIdToResume;
+		logger.info("resuming process...");
+		//restore items in in control from database
+		itemsInControl.clear();
+		itemsInControl.add(processElements.get(itemIdentifierToResume));
+		//set all items in control to following item
+		Set<ProcessItem> newItemsInControl = new HashSet<>();
+		for (ProcessItem item : itemsInControl) {
+			newItemsInControl.addAll(item.getFollowingItems());
+		}
+		itemsInControl = newItemsInControl;
+		try {
+			while (!(allItemsInControlBlocking())) {
+				singleStep();
+				Thread.sleep(2500);
+			}
+			persistActualProcessState();
+		} catch (InterruptedException e) {
+			logger.error(e);
+		}		
 	}
 
 	public void startProcess() {

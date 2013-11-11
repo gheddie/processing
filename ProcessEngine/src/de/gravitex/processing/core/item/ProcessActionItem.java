@@ -25,6 +25,7 @@ public class ProcessActionItem extends ProcessItem {
 	}
 	
 	public void gainControl() {
+		super.gainControl();
 		//execute action
 		if (actionClass != null) {
 			try {

@@ -17,6 +17,7 @@ public class ProcessGUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private JButton btnProceed;
+	
 	private ProcessEngine processContainer;
 
 	public ProcessGUI() {
@@ -27,7 +28,9 @@ public class ProcessGUI extends JFrame {
 		btnProceed = new JButton("proceed");
 		btnProceed.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				processContainer.startProcess();
+				processContainer.resumeProcess(55, "t1");
+				//---
+//				processContainer.startProcess();
 				//---
 //				processContainer.singleStep();
 				//---
@@ -66,7 +69,9 @@ public class ProcessGUI extends JFrame {
 		
 		// processContainer = ProcessDefinitionProvider.getReferenceProcessFromWork();
 		
-		processContainer = ProcessDefinitionProvider.getLinearProcess();
+		// processContainer = ProcessDefinitionProvider.getLinearProcess();
+		
+		processContainer = ProcessDefinitionProvider.getLinearProcess2();
 	}
 
 	// ---

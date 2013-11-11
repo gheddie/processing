@@ -430,6 +430,57 @@ public class ProcessDefinitionProvider {
 			return null;
 		}
 	}
+	
+	public static ProcessEngine getLinearProcess2() {
+		
+		ProcessEngine processContainer = new ProcessEngine();
+		
+		try {
+			ProcessItem start = ProcessItemFactory.getProcessElement(ProcessItemType.START, "start", null);
+			processContainer.addElement(start);
+			ProcessItem ac1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac1", null);
+			processContainer.addElement(ac1);
+			ProcessItem ac2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac2", null);
+			processContainer.addElement(ac2);
+			ProcessItem ac3 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac3", null);
+			processContainer.addElement(ac3);
+			ProcessItem t1 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t1", null);
+			processContainer.addElement(t1);
+			ProcessItem ac4 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac4", null);
+			processContainer.addElement(ac4);
+			ProcessItem ac5 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac5", null);
+			processContainer.addElement(ac5);
+			ProcessItem ac6 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac6", null);
+			processContainer.addElement(ac6);
+			ProcessItem ac7 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac7", null);
+			processContainer.addElement(ac7);
+			ProcessItem t2 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t2", null);
+			processContainer.addElement(t2);
+			ProcessItem ac8 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac8", null);
+			processContainer.addElement(ac8);
+			ProcessItem end = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end", null);
+			processContainer.addElement(end);
+			
+			//relations
+			processContainer.relateParent("ac1", "start");
+			processContainer.relateParent("ac2", "ac1");
+			processContainer.relateParent("ac3", "ac2");
+			processContainer.relateParent("t1", "ac3");
+			processContainer.relateParent("ac4", "t1");
+			processContainer.relateParent("ac5", "ac4");
+			processContainer.relateParent("ac6", "ac5");
+			processContainer.relateParent("ac7", "ac6");
+			processContainer.relateParent("t2", "ac7");
+			processContainer.relateParent("ac8", "t2");
+			processContainer.relateParent("end", "ac8");
+			
+			return processContainer;
+			
+		} catch (ProcessException e) {
+			logger.error(e);
+			return null;
+		}
+	}
 
 	public static ProcessEngine getLinearProcess() {
 		

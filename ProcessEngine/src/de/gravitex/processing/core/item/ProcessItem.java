@@ -3,9 +3,13 @@ package de.gravitex.processing.core.item;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import de.gravitex.processing.core.ProcessItemType;
 
 public abstract class ProcessItem {
+	
+	private static Logger			logger					= Logger.getLogger(ProcessItem.class);
 
 	private String identifier;
 	
@@ -50,7 +54,7 @@ public abstract class ProcessItem {
 	}
 
 	public void gainControl() {
-		// empty base implementation	
+		logger.info(" ------------------> gaining control : " + this);
 	}
 	
 	public abstract boolean isBlocking();
