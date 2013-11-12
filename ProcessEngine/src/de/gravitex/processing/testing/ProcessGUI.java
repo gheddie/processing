@@ -29,9 +29,9 @@ public class ProcessGUI extends JFrame {
 		btnProceed = new JButton("proceed");
 		btnProceed.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				processContainer.startProcess();
+				processContainer.startProcess();
 				//---
-				processContainer.finishTask("t1");
+//				processContainer.finishTask("t1");
 			}
 		});
 		add(btnProceed, BorderLayout.SOUTH);
@@ -61,7 +61,7 @@ public class ProcessGUI extends JFrame {
 		
 		// processContainer = ProcessDefinitionProvider.getLinearProcess();
 		
-		processContainer = ProcessDefinitionProvider.getLinearProcess();
+		processContainer = ProcessDefinitionProvider.getLinearHomeProcess();
 		//---
 		/*
 		processContainer.clearItemsInControl();
@@ -80,8 +80,8 @@ public class ProcessGUI extends JFrame {
 	public static void main(String[] args) {
 		
 		//log4j
-		PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
-		//PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
+		//PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
+		PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
 		
 		//start process gui
 		new ProcessGUI();

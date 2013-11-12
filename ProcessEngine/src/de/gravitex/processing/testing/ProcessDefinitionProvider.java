@@ -431,6 +431,88 @@ public class ProcessDefinitionProvider {
 			return null;
 		}
 	}
+	
+	public static ProcessEngine getLinearHomeProcess() {
+		
+		ProcessEngine processContainer = new ProcessEngine();
+		
+		try {
+			//start
+			ProcessItem start = ProcessItemFactory.getProcessElement(ProcessItemType.START, "start", null);
+			processContainer.addElement(start);
+			
+			//tasks
+			ProcessItem t1 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t1", null);
+			processContainer.addElement(t1);
+			ProcessItem t2 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t2", null);
+			processContainer.addElement(t2);
+			ProcessItem t3 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t3", null);
+			processContainer.addElement(t3);
+			ProcessItem t4 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t4", null);
+			processContainer.addElement(t4);
+			ProcessItem t5 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t5", null);
+			processContainer.addElement(t5);
+			ProcessItem t6 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t6", null);
+			processContainer.addElement(t6);
+			ProcessItem t7 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t7", null);
+			processContainer.addElement(t7);
+			
+			//actions
+			ProcessItem ac1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac1", null);
+			processContainer.addElement(ac1);
+			ProcessItem ac2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac2", null);
+			processContainer.addElement(ac2);
+			ProcessItem ac3 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac3", null);
+			processContainer.addElement(ac3);
+			ProcessItem ac4 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac4", null);
+			processContainer.addElement(ac4);
+			
+			//forks
+			ProcessItem fork1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork1", null);
+			processContainer.addElement(fork1);
+			ProcessItem fork2 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork2", null);
+			processContainer.addElement(fork2);
+			
+			//joins
+			ProcessItem join1 = ProcessItemFactory.getProcessElement(ProcessItemType.JOIN, "join1", null);
+			processContainer.addElement(join1);
+			ProcessItem join2 = ProcessItemFactory.getProcessElement(ProcessItemType.JOIN, "join2", null);
+			processContainer.addElement(join2);
+			
+			//ends
+			ProcessItem end1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end1", null);
+			processContainer.addElement(end1);
+			ProcessItem end2 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end2", null);
+			processContainer.addElement(end2);
+			
+			//relations
+			/*01*/processContainer.relateParent("ac1", 		"start");
+			/*02*/processContainer.relateParent("t1", 		"ac1");
+			/*03*/processContainer.relateParent("fork1", 	"t1");
+			/*04*/processContainer.relateParent("ac2", 		"fork1");
+			/*05*/processContainer.relateParent("t2", 		"fork1");
+			/*06*/processContainer.relateParent("t3", 		"ac2");
+			/*07*/processContainer.relateParent("join2", 	"t3");
+			/*08*/processContainer.relateParent("t6", 		"join2");
+			/*09*/processContainer.relateParent("ac4", 		"t6");
+			/*10*/processContainer.relateParent("end1", 	"ac4");
+			/*11*/processContainer.relateParent("join2", 	"fork2");
+			/*12*/processContainer.relateParent("t7", 		"fork2");
+			/*13*/processContainer.relateParent("end2", 	"t7");
+			/*14*/processContainer.relateParent("t4", 		"fork2");
+			/*15*/processContainer.relateParent("join1", 	"t4");
+			/*16*/processContainer.relateParent("ac3", 		"join1");
+			/*17*/processContainer.relateParent("join1", 	"t2");
+			/*18*/processContainer.relateParent("fork2", 	"ac3");
+			
+			return processContainer;
+			
+		} catch (ProcessException e) {
+			logger.error(e);
+			return null;
+		}
+	}
+	
 	public static ProcessEngine getLinearProcess() {
 		
 		ProcessEngine processEngine = new ProcessEngine();
