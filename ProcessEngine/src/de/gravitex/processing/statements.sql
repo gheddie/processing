@@ -12,6 +12,7 @@ CREATE TABLE process_task (
 	id INTEGER DEFAULT NEXTVAL('processing_id_seq'),
 	name VARCHAR(32),
 	processId INTEGER,
+	state VARCHAR(32),
 	primary key (id)
 	);
 

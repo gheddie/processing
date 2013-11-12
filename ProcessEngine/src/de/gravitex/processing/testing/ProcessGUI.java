@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import org.apache.log4j.PropertyConfigurator;
 
 import de.gravitex.processing.core.ProcessEngine;
+import de.gravitex.processing.core.exception.ProcessException;
 import de.gravitex.processing.testing.ProcessDefinitionProvider;
 
 public class ProcessGUI extends JFrame {
@@ -28,20 +29,9 @@ public class ProcessGUI extends JFrame {
 		btnProceed = new JButton("proceed");
 		btnProceed.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				processContainer.resumeProcess(55, "t1");
-				//---
 //				processContainer.startProcess();
 				//---
-//				processContainer.singleStep();
-				//---
-//				while (true) {
-//					processContainer.singleStep();	
-//					try {
-//						Thread.sleep(100);
-//					} catch (InterruptedException e1) {
-//						e1.printStackTrace();
-//					}
-//				}				
+				processContainer.finishTask("t1");
 			}
 		});
 		add(btnProceed, BorderLayout.SOUTH);
@@ -71,7 +61,16 @@ public class ProcessGUI extends JFrame {
 		
 		// processContainer = ProcessDefinitionProvider.getLinearProcess();
 		
-		processContainer = ProcessDefinitionProvider.getLinearProcess2();
+		processContainer = ProcessDefinitionProvider.getLinearProcess();
+		//---
+		/*
+		processContainer.clearItemsInControl();
+		try {
+			processContainer.adaptItemsInControl("ac21", "ac13", "end4");
+		} catch (ProcessException e) {
+			e.printStackTrace();
+		}
+		*/
 	}
 
 	// ---

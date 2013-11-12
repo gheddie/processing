@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.postgresql.Driver;
 
 import de.gravitex.processing.core.ProcessState;
+import de.gravitex.processing.core.TaskState;
 
 public class ProcessDAO {
 
@@ -83,7 +84,7 @@ public class ProcessDAO {
 		try {
 			cn = getConnection();
 			st = cn.createStatement();
-			String sql = "insert into process_task (name, processId) values ('" + task.getName() + "', '" + processId + "')";
+			String sql = "insert into process_task (name, processId, state) values ('" + task.getName() + "', '" + processId + "', '"+task.getState()+"')";
 			st.executeUpdate(sql);
 		} catch (Exception e) {
 			logger.error(e);
@@ -144,6 +145,19 @@ public class ProcessDAO {
 			logger.error(e);
 			return -1;
 		}
+	}
+	
+	public static void setTaskResolved(int processId, String taskName) {
+		Connection cn = null;
+		Statement st = null;
+		try {
+			cn = getConnection();
+			st = cn.createStatement();
+			String sql = "update process_task set state = '"+TaskState.FINISHED+"' where processId = "+processId+" and name = '"+taskName+"'";
+			st.executeUpdate(sql);
+		} catch (Exception e) {
+			logger.error(e);
+		}		
 	}
 
 	// ---

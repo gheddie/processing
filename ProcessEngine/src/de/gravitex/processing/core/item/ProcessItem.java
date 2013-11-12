@@ -54,7 +54,7 @@ public abstract class ProcessItem {
 	}
 
 	public void gainControl() {
-		logger.info(" ------------------> gaining control : " + this);
+//		logger.info(" ------------------> gaining control : " + this);
 	}
 	
 	public abstract boolean isBlocking();

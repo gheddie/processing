@@ -13,8 +13,10 @@ import de.gravitex.processing.core.exception.ProcessException;
 import de.gravitex.processing.core.item.ProcessActionItem;
 import de.gravitex.processing.core.item.ProcessForkItem;
 import de.gravitex.processing.core.item.ProcessItem;
+import de.gravitex.processing.core.item.ProcessTaskItem;
 import de.gravitex.processing.core.logic.FlowAction;
 import de.gravitex.processing.core.logic.FlowDecision;
+import de.gravitex.processing.core.logic.TaskResolver;
 
 public class ProcessEngine {
 	
@@ -63,21 +65,32 @@ public class ProcessEngine {
 		processElements.put(processElement.getIdentifier(), processElement);
 	}
 
-	private void singleStep() {
+	public void singleStep() {
 		logger.trace("stepping...");
 		Set<ProcessItem> newItemsInControl = new HashSet<>();
 		for (ProcessItem item : itemsInControl) {
-			newItemsInControl.addAll(item.getFollowingItems());
+			//blocking item will not put following items but itself into the set
+			if (item.isBlocking()) {
+				newItemsInControl.add(item);
+			} else {
+				newItemsInControl.addAll(item.getFollowingItems());	
+			}			
 		}
 		itemsInControl = newItemsInControl;
 		for (ProcessItem item : itemsInControl) {
 			item.gainControl();
 		}
-//		debugControl();
+		debugControl();
 	}
 
 	private void debugControl() {
 		if (itemsInControl.size() > 0) {
+			
+			//all blocking?
+//			if (allItemsInControlBlocking()) {
+//				logger.info(" ------------------------------ ALL BLOCKING ------------------------------ ");
+//			}
+			
 			logger.info("---------------------------------");
 			for (ProcessItem item : itemsInControl) {
 				logger.info("IN CONTROL : " + item);
@@ -114,12 +127,14 @@ public class ProcessEngine {
 		((ProcessActionItem) processElements.get(itemIdentifier)).setActionClass(actionClass);		
 	}
 	
-	public void resumeProcess(int processIdToResume, String itemIdentifierToResume) {
+	public void resumeProcess(int processIdToResume, String... itemIdentifiersToResume) {
 		processId = processIdToResume;
 		logger.info("resuming process...");
 		//restore items in in control from database
 		itemsInControl.clear();
-		itemsInControl.add(processElements.get(itemIdentifierToResume));
+		for (String itemIdentifierToResume : itemIdentifiersToResume) {
+			itemsInControl.add(processElements.get(itemIdentifierToResume));			
+		}		
 		//set all items in control to following item
 		Set<ProcessItem> newItemsInControl = new HashSet<>();
 		for (ProcessItem item : itemsInControl) {
@@ -155,6 +170,7 @@ public class ProcessEngine {
 		for (ProcessItem item : itemsInControl) {
 			task = new ProcessTask();
 			task.setName(item.getIdentifier());
+			task.setState(TaskState.OPEN);
 			ProcessDAO.writeProcessTask(processId, task);
 		}
 	}
@@ -166,5 +182,36 @@ public class ProcessEngine {
 			}
 		}
 		return true;
+	}
+
+	public void clearItemsInControl() {
+		itemsInControl.clear();
+	}
+	
+	public void adaptItemsInControl(String... itemIdentifiers) throws ProcessException {
+		ProcessItem element = null;
+		for (String itemIdentifier : itemIdentifiers) {
+			element = processElements.get(itemIdentifier);
+			if (element == null) {
+				throw new ProcessException("unable to find process item by identifier '"+itemIdentifier+"'!");
+			}
+			itemsInControl.add(element);
+		}
+	}
+
+	public void finishTask(String taskName) {
+		logger.info("attempting to finish task '"+taskName+"'...");
+		ProcessTaskItem taskItem = (ProcessTaskItem) processElements.get(taskName);
+		try {
+			if (((Class<? extends TaskResolver>) taskItem.getResolverClass()).newInstance().isTaskResolved()) {
+				ProcessDAO.setTaskResolved(processId, taskName);	
+			}			
+		} catch (InstantiationException | IllegalAccessException e) {
+			logger.error(e);
+		}
+	}
+
+	public void addTaskResolver(String itemIdentifier, Class<? extends TaskResolver> resolverClass) {
+		((ProcessTaskItem) processElements.get(itemIdentifier)).setResolverClass(resolverClass);
 	}
 }
