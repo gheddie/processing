@@ -132,11 +132,12 @@ public class ProcessEngine {
 		((ProcessActionItem) processElements.get(itemIdentifier)).setActionClass(actionClass);		
 	}
 	
-	public void startProcess() throws ProcessException {
+	public int startProcess() throws ProcessException {
 		//put start item in control
 		itemsInControl.add(findStartItem());
 		int processId = ProcessDAO.writeProcessInstance("klaus", ProcessState.RUNNING, new Date());
 		loop(processId);
+		return processId;
 	}
 
 	private ProcessItem findStartItem() throws ProcessException {

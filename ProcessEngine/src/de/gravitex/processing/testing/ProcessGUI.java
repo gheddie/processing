@@ -3,51 +3,74 @@ package de.gravitex.processing.testing;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
 
 import org.apache.log4j.PropertyConfigurator;
 
 import de.gravitex.processing.core.ProcessEngine;
 import de.gravitex.processing.core.dao.ProcessDAO;
-import de.gravitex.processing.core.dao.ProcessTask;
 import de.gravitex.processing.core.exception.ProcessException;
-import de.gravitex.processing.testing.ProcessDefinitionProvider;
 
 public class ProcessGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
+	private JToolBar tbMain;
+	
+	private JButton btnStart;
+	
+	private JTextField tfResumeTask;
+	
 	private JButton btnProceed;
 	
 	private ProcessEngine processContainer;
+	
+	private int processId;
 
 	public ProcessGUI() {
-		super();
-		initProcess();
+		super();		
 		setSize(640, 480);
 		setLayout(new BorderLayout());
-		btnProceed = new JButton("proceed");
-		btnProceed.addActionListener(new ActionListener() {
+		//------------------------------------------------
+		tbMain = new JToolBar();
+		tbMain.setFloatable(false);
+		//------------------------------------------------
+		btnStart = new JButton("start");
+		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				ProcessDAO.clearAll();
-				//---
-//				try {
-//					processContainer.startProcess();
-//				} catch (ProcessException e1) {
-//					e1.printStackTrace();
-//				}
-				//---
+				initProcess();
+				ProcessDAO.clearAll();
 				try {
-					processContainer.finishTask("t4", 129);
+				 processId = processContainer.startProcess();
 				} catch (ProcessException e1) {
 					e1.printStackTrace();
 				}
 			}
-		});
-		add(btnProceed, BorderLayout.SOUTH);
+		});		
+		//------------------------------------------------
+		btnProceed = new JButton("proceed");
+		btnProceed.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				initProcess();
+				try {
+					processContainer.finishTask(tfResumeTask.getText(), processId);
+				} catch (ProcessException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});	
+		//------------------------------------------------
+		tfResumeTask = new JTextField();
+		//------------------------------------------------
+		tbMain.add(btnStart);
+		tbMain.add(tfResumeTask);
+		tbMain.add(btnProceed);
+		add(tbMain, BorderLayout.NORTH);
+		//------------------------------------------------
 		setVisible(true);
 	}
 
