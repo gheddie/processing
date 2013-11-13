@@ -29,9 +29,17 @@ public class ProcessGUI extends JFrame {
 		btnProceed = new JButton("proceed");
 		btnProceed.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				processContainer.startProcess();
+//				try {
+//					processContainer.startProcess();
+//				} catch (ProcessException e1) {
+//					e1.printStackTrace();
+//				}
 				//---
-//				processContainer.finishTask("t1");
+				try {
+					processContainer.finishTask("t3", 38);
+				} catch (ProcessException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 		add(btnProceed, BorderLayout.SOUTH);

@@ -3,6 +3,7 @@ package de.gravitex.processing.core;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -10,6 +11,7 @@ import org.apache.log4j.Logger;
 import de.gravitex.processing.core.dao.ProcessDAO;
 import de.gravitex.processing.core.dao.ProcessTask;
 import de.gravitex.processing.core.exception.ProcessException;
+import de.gravitex.processing.core.exception.TaskUnresolvedException;
 import de.gravitex.processing.core.item.ProcessActionItem;
 import de.gravitex.processing.core.item.ProcessForkItem;
 import de.gravitex.processing.core.item.ProcessItem;
@@ -26,7 +28,7 @@ public class ProcessEngine {
 
 	private Set<ProcessItem> itemsInControl;
 
-	private int processId;
+//	private int processId;
 
 	public ProcessEngine() {
 		super();
@@ -49,12 +51,12 @@ public class ProcessEngine {
 		}
 
 		if (processElements.size() == 0) {
-			if (processElement.getItemType().equals(ProcessItemType.START)) {
-				// init items in control with start element
-				itemsInControl.add(processElement);
-			} else {
-				throw new ProcessException("process must start with START element!");
-			}
+//			if (processElement.getItemType().equals(ProcessItemType.START)) {
+//				// init items in control with start element
+//				itemsInControl.add(processElement);
+//			} else {
+//				throw new ProcessException("process must start with START element!");
+//			}
 		} else {
 			if (processElements.get(processElement.getIdentifier()) != null) {
 				throw new ProcessException("duplicate identifier '"+processElement.getIdentifier()+"' detected.");
@@ -127,8 +129,7 @@ public class ProcessEngine {
 		((ProcessActionItem) processElements.get(itemIdentifier)).setActionClass(actionClass);		
 	}
 	
-	public void resumeProcess(int processIdToResume, String... itemIdentifiersToResume) {
-		processId = processIdToResume;
+	public void resumeProcess(int processId, String... itemIdentifiersToResume) {
 		logger.info("resuming process...");
 		//restore items in in control from database
 		itemsInControl.clear();
@@ -141,31 +142,38 @@ public class ProcessEngine {
 			newItemsInControl.addAll(item.getFollowingItems());
 		}
 		itemsInControl = newItemsInControl;
-		try {
-			while (!(allItemsInControlBlocking())) {
-				singleStep();
-				Thread.sleep(2500);
-			}
-			persistActualProcessState();
-		} catch (InterruptedException e) {
-			logger.error(e);
-		}		
+		loop(processId);		
 	}
 
-	public void startProcess() {
-		processId = ProcessDAO.writeProcessInstance("klaus", ProcessState.RUNNING, new Date());
+	public void startProcess() throws ProcessException {
+		//put start item in control
+		itemsInControl.add(findStartItem());
+		int processId = ProcessDAO.writeProcessInstance("klaus", ProcessState.RUNNING, new Date());
+		loop(processId);
+	}
+
+	private ProcessItem findStartItem() throws ProcessException {
+		for (ProcessItem item : processElements.values()) {
+			if (item.getItemType().equals(ProcessItemType.START)) {
+				return item;
+			}
+		}
+		throw new ProcessException("start item could not be found!");
+	}
+
+	private void loop(int processId) {
 		try {
 			while (!(allItemsInControlBlocking())) {
 				singleStep();
 				Thread.sleep(2500);
 			}
-			persistActualProcessState();
+			persistActualProcessState(processId);
 		} catch (InterruptedException e) {
 			logger.error(e);
 		}
 	}
 
-	private void persistActualProcessState() {
+	private void persistActualProcessState(int processId) {
 		ProcessTask task = null;
 		for (ProcessItem item : itemsInControl) {
 			task = new ProcessTask();
@@ -199,12 +207,29 @@ public class ProcessEngine {
 		}
 	}
 
-	public void finishTask(String taskName) {
+	public void finishTask(String taskName, int processId, String... additionalItemsInControl) throws ProcessException {
 		logger.info("attempting to finish task '"+taskName+"'...");
 		ProcessTaskItem taskItem = (ProcessTaskItem) processElements.get(taskName);
 		try {
-			if (((Class<? extends TaskResolver>) taskItem.getResolverClass()).newInstance().isTaskResolved()) {
+			Class<? extends TaskResolver> resolverClass = (Class<? extends TaskResolver>) taskItem.getResolverClass();
+			if (resolverClass == null) {
+				throw new ProcessException("resolver class for task '"+taskName+"' must not be NULL!");
+			}
+			if (resolverClass.newInstance().isTaskResolved()) {
 				ProcessDAO.setTaskResolved(processId, taskName);	
+				//put following item of task in control (task has only one following item)
+				Iterator<ProcessItem> iterator = taskItem.getFollowingItems().iterator();
+				ProcessItem item = iterator.next();
+				itemsInControl.add(item);
+				
+				//place additional items in control
+				for (String identifier : additionalItemsInControl) {
+					itemsInControl.add(processElements.get(identifier));
+				}
+				
+				loop(processId);
+			} else {
+				throw new TaskUnresolvedException("task '"+taskName+"' was not resolved!");
 			}			
 		} catch (InstantiationException | IllegalAccessException e) {
 			logger.error(e);

@@ -50,7 +50,8 @@ public class ProcessDAO {
 			cn = getConnection();
 			st = cn.createStatement();
 			processId = getSequenceVal();
-			String sql = "insert into process_instance (id, name, state, creationDate) values ("+processId+", '" + process.getName() + "', '" + process.getState() + "', '" + DAOUtils.formatDateForDB(process.getCreationDate()) + "')";
+//			String sql = "insert into process_instance (id, name, state, creationDate) values ("+processId+", '" + process.getName() + "', '" + process.getState() + "', '" + DAOUtils.formatDateForDB(process.getCreationDate()) + "')";
+			String sql = "insert into process_instance (id, name, state, creationDate) values ("+processId+", '" + process.getName() + "', '" + process.getState() + "', null)";
 			st.executeUpdate(sql);
 			return processId;
 		} catch (Exception e) {
@@ -148,6 +149,7 @@ public class ProcessDAO {
 	}
 	
 	public static void setTaskResolved(int processId, String taskName) {
+		logger.info("setting task '"+taskName+"' to resolved...");
 		Connection cn = null;
 		Statement st = null;
 		try {

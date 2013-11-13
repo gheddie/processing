@@ -15,6 +15,8 @@ import de.gravitex.processing.testing.decision.DecisionForA1;
 import de.gravitex.processing.testing.decision.DecisionForA2;
 import de.gravitex.processing.testing.decision.DecisionForA3;
 import de.gravitex.processing.testing.taskresolver.ResolveT1;
+import de.gravitex.processing.testing.taskresolver.ResolveT2;
+import de.gravitex.processing.testing.taskresolver.ResolveT3;
 
 public class ProcessDefinitionProvider {
 	
@@ -456,6 +458,8 @@ public class ProcessDefinitionProvider {
 			processContainer.addElement(t6);
 			ProcessItem t7 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t7", null);
 			processContainer.addElement(t7);
+			ProcessItem t8 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t8", null);
+			processContainer.addElement(t8);
 			
 			//actions
 			ProcessItem ac1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac1", null);
@@ -492,11 +496,11 @@ public class ProcessDefinitionProvider {
 			/*04*/processContainer.relateParent("ac2", 		"fork1");
 			/*05*/processContainer.relateParent("t2", 		"fork1");
 			/*06*/processContainer.relateParent("t3", 		"ac2");
-			/*07*/processContainer.relateParent("join2", 	"t3");
+			/*07*/processContainer.relateParent("t8", 		"t3");
 			/*08*/processContainer.relateParent("t6", 		"join2");
 			/*09*/processContainer.relateParent("ac4", 		"t6");
 			/*10*/processContainer.relateParent("end1", 	"ac4");
-			/*11*/processContainer.relateParent("join2", 	"fork2");
+			/*11*/processContainer.relateParent("join2", 	"t5");
 			/*12*/processContainer.relateParent("t7", 		"fork2");
 			/*13*/processContainer.relateParent("end2", 	"t7");
 			/*14*/processContainer.relateParent("t4", 		"fork2");
@@ -504,6 +508,13 @@ public class ProcessDefinitionProvider {
 			/*16*/processContainer.relateParent("ac3", 		"join1");
 			/*17*/processContainer.relateParent("join1", 	"t2");
 			/*18*/processContainer.relateParent("fork2", 	"ac3");
+			/*19*/processContainer.relateParent("t5", 		"fork2");
+			/*20*/processContainer.relateParent("join2", 	"t8");
+			
+			//task checkers
+			processContainer.addTaskResolver("t1", ResolveT1.class);
+			processContainer.addTaskResolver("t2", ResolveT2.class);
+			processContainer.addTaskResolver("t3", ResolveT3.class);
 			
 			return processContainer;
 			
