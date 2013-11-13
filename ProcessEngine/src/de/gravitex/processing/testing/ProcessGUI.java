@@ -89,7 +89,7 @@ public class ProcessGUI extends JFrame {
 		
 		// processContainer = ProcessDefinitionProvider.getHaftungsSumme();
 		
-		// processContainer = ProcessDefinitionProvider.getBewerbung();
+//		 processContainer = ProcessDefinitionProvider.getBewerbung();
 		
 		// processContainer = ProcessDefinitionProvider.getReferenceProcess();
 		
@@ -97,7 +97,9 @@ public class ProcessGUI extends JFrame {
 		
 		// processContainer = ProcessDefinitionProvider.getLinearProcess();
 		
-		processContainer = ProcessDefinitionProvider.getLinearHomeProcess();
+		processContainer = ProcessDefinitionProvider.getTestTimer();
+		
+//		processContainer = ProcessDefinitionProvider.getLinearHomeProcess();
 		//---
 		/*
 		processContainer.clearItemsInControl();

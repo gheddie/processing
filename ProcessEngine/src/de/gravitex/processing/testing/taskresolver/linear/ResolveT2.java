@@ -1,4 +1,4 @@
-package de.gravitex.processing.testing.taskresolver;
+package de.gravitex.processing.testing.taskresolver.linear;
 
 import org.apache.log4j.Logger;
 

@@ -14,14 +14,15 @@ import de.gravitex.processing.testing.appliance.decision.DecisionInterestPotenti
 import de.gravitex.processing.testing.decision.DecisionForA1;
 import de.gravitex.processing.testing.decision.DecisionForA2;
 import de.gravitex.processing.testing.decision.DecisionForA3;
-import de.gravitex.processing.testing.taskresolver.ResolveT1;
-import de.gravitex.processing.testing.taskresolver.ResolveT2;
-import de.gravitex.processing.testing.taskresolver.ResolveT3;
-import de.gravitex.processing.testing.taskresolver.ResolveT4;
-import de.gravitex.processing.testing.taskresolver.ResolveT5;
-import de.gravitex.processing.testing.taskresolver.ResolveT6;
-import de.gravitex.processing.testing.taskresolver.ResolveT7;
-import de.gravitex.processing.testing.taskresolver.ResolveT8;
+import de.gravitex.processing.testing.taskresolver.appliance.GenericApplianceResolver;
+import de.gravitex.processing.testing.taskresolver.linear.ResolveT1;
+import de.gravitex.processing.testing.taskresolver.linear.ResolveT2;
+import de.gravitex.processing.testing.taskresolver.linear.ResolveT3;
+import de.gravitex.processing.testing.taskresolver.linear.ResolveT4;
+import de.gravitex.processing.testing.taskresolver.linear.ResolveT5;
+import de.gravitex.processing.testing.taskresolver.linear.ResolveT6;
+import de.gravitex.processing.testing.taskresolver.linear.ResolveT7;
+import de.gravitex.processing.testing.taskresolver.linear.ResolveT8;
 
 public class ProcessDefinitionProvider {
 	
@@ -287,6 +288,10 @@ public class ProcessDefinitionProvider {
 			processContainer.relateParent("confStoreData", "fork3");
 			processContainer.relateParent("storeDataPot", "confStoreData");
 			processContainer.relateParent("end4", "storeDataPot");
+			
+			//task checkers
+			processContainer.addTaskResolver("gatherData", GenericApplianceResolver.class);
+			processContainer.addTaskResolver("sightData", GenericApplianceResolver.class);
 			
 			//conditions
 			processContainer.addCondition("fork1", "join1", DecisionInterestNone.class);
@@ -664,6 +669,36 @@ public class ProcessDefinitionProvider {
 			
 			//task checkers
 			processEngine.addTaskResolver("t1", ResolveT1.class);
+			
+			return processEngine;
+			
+		} catch (ProcessException e) {
+			logger.error(e);
+			return null;
+		}
+	}
+
+	public static ProcessEngine getTestTimer() {
+		
+		ProcessEngine processEngine = new ProcessEngine();
+		
+		try {
+			ProcessItem start = ProcessItemFactory.getProcessElement(ProcessItemType.START, "start", null);
+			processEngine.addElement(start);
+			ProcessItem ac1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac1", null);
+			processEngine.addElement(ac1);
+			ProcessItem timer1 = ProcessItemFactory.getProcessElement(ProcessItemType.WAIT, "timer1", null);
+			processEngine.addElement(timer1);
+			ProcessItem ac2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac2", null);
+			processEngine.addElement(ac2);
+			ProcessItem end = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end", null);
+			processEngine.addElement(end);
+			
+			//relate
+			processEngine.relateParent("ac1", "start");
+			processEngine.relateParent("timer1", "ac1");
+			processEngine.relateParent("ac2", "timer1");
+			processEngine.relateParent("end", "ac2");
 			
 			return processEngine;
 			
