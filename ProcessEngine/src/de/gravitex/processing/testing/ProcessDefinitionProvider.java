@@ -17,6 +17,11 @@ import de.gravitex.processing.testing.decision.DecisionForA3;
 import de.gravitex.processing.testing.taskresolver.ResolveT1;
 import de.gravitex.processing.testing.taskresolver.ResolveT2;
 import de.gravitex.processing.testing.taskresolver.ResolveT3;
+import de.gravitex.processing.testing.taskresolver.ResolveT4;
+import de.gravitex.processing.testing.taskresolver.ResolveT5;
+import de.gravitex.processing.testing.taskresolver.ResolveT6;
+import de.gravitex.processing.testing.taskresolver.ResolveT7;
+import de.gravitex.processing.testing.taskresolver.ResolveT8;
 
 public class ProcessDefinitionProvider {
 	
@@ -515,6 +520,11 @@ public class ProcessDefinitionProvider {
 			processContainer.addTaskResolver("t1", ResolveT1.class);
 			processContainer.addTaskResolver("t2", ResolveT2.class);
 			processContainer.addTaskResolver("t3", ResolveT3.class);
+			processContainer.addTaskResolver("t4", ResolveT4.class);
+			processContainer.addTaskResolver("t5", ResolveT5.class);
+			processContainer.addTaskResolver("t6", ResolveT6.class);
+			processContainer.addTaskResolver("t7", ResolveT7.class);
+			processContainer.addTaskResolver("t8", ResolveT8.class);
 			
 			return processContainer;
 			

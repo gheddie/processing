@@ -32,9 +32,6 @@ public class ProcessGUI extends JFrame {
 		btnProceed = new JButton("proceed");
 		btnProceed.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				List<ProcessTask> openTasks = ProcessDAO.loadOpenTasks(87);
-//				System.out.println(openTasks);
-				//---
 //				ProcessDAO.clearAll();
 				//---
 //				try {
@@ -44,7 +41,7 @@ public class ProcessGUI extends JFrame {
 //				}
 				//---
 				try {
-					processContainer.finishTask("t3", 93);
+					processContainer.finishTask("t4", 129);
 				} catch (ProcessException e1) {
 					e1.printStackTrace();
 				}

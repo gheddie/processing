@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -27,6 +28,8 @@ public class ProcessEngine {
 	private HashMap<String, ProcessItem> processElements;
 
 	private Set<ProcessItem> itemsInControl;
+
+	private List<ProcessTask> openTasks;
 
 //	private int processId;
 
@@ -129,22 +132,6 @@ public class ProcessEngine {
 		((ProcessActionItem) processElements.get(itemIdentifier)).setActionClass(actionClass);		
 	}
 	
-	public void resumeProcess(int processId, String... itemIdentifiersToResume) {
-		logger.info("resuming process...");
-		//restore items in in control from database
-		itemsInControl.clear();
-		for (String itemIdentifierToResume : itemIdentifiersToResume) {
-			itemsInControl.add(processElements.get(itemIdentifierToResume));			
-		}		
-		//set all items in control to following item
-		Set<ProcessItem> newItemsInControl = new HashSet<>();
-		for (ProcessItem item : itemsInControl) {
-			newItemsInControl.addAll(item.getFollowingItems());
-		}
-		itemsInControl = newItemsInControl;
-		loop(processId);		
-	}
-
 	public void startProcess() throws ProcessException {
 		//put start item in control
 		itemsInControl.add(findStartItem());
@@ -179,8 +166,24 @@ public class ProcessEngine {
 			task = new ProcessTask();
 			task.setName(item.getIdentifier());
 			task.setState(TaskState.OPEN);
-			ProcessDAO.writeProcessTask(processId, task);
+			if (!(taskActuallyOpen(item.getIdentifier()))) {
+				ProcessDAO.writeProcessTask(processId, task);	
+			}			
 		}
+	}
+
+	private boolean taskActuallyOpen(String identifier) {
+		if (openTasks == null) {
+			logger.info("no open tasks present --> skipping '"+identifier+"'.");
+			return false;
+		}
+		for (ProcessTask openTask : openTasks) {
+			if (openTask.getName().equals(identifier)) {
+				logger.info("task '"+identifier+"' is already marked as open --> skipping.");	
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean allItemsInControlBlocking() {
@@ -222,7 +225,8 @@ public class ProcessEngine {
 				ProcessItem item = iterator.next();
 				itemsInControl.add(item);
 				//place other open tasks as itemsin control
-				for (ProcessTask task : ProcessDAO.loadOpenTasks(processId)) {
+				openTasks = ProcessDAO.loadOpenTasks(processId);
+				for (ProcessTask task : openTasks) {
 					itemsInControl.add(processElements.get(task.getName()));
 				}
 				loop(processId);
