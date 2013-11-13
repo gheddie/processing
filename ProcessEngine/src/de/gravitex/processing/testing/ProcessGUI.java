@@ -3,6 +3,7 @@ package de.gravitex.processing.testing;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -10,6 +11,8 @@ import javax.swing.JFrame;
 import org.apache.log4j.PropertyConfigurator;
 
 import de.gravitex.processing.core.ProcessEngine;
+import de.gravitex.processing.core.dao.ProcessDAO;
+import de.gravitex.processing.core.dao.ProcessTask;
 import de.gravitex.processing.core.exception.ProcessException;
 import de.gravitex.processing.testing.ProcessDefinitionProvider;
 
@@ -29,6 +32,11 @@ public class ProcessGUI extends JFrame {
 		btnProceed = new JButton("proceed");
 		btnProceed.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+//				List<ProcessTask> openTasks = ProcessDAO.loadOpenTasks(87);
+//				System.out.println(openTasks);
+				//---
+//				ProcessDAO.clearAll();
+				//---
 //				try {
 //					processContainer.startProcess();
 //				} catch (ProcessException e1) {
@@ -36,7 +44,7 @@ public class ProcessGUI extends JFrame {
 //				}
 				//---
 				try {
-					processContainer.finishTask("t3", 38);
+					processContainer.finishTask("t3", 93);
 				} catch (ProcessException e1) {
 					e1.printStackTrace();
 				}
@@ -80,7 +88,7 @@ public class ProcessGUI extends JFrame {
 		}
 		*/
 	}
-
+	
 	// ---
 	// ---
 	// ---
@@ -88,8 +96,8 @@ public class ProcessGUI extends JFrame {
 	public static void main(String[] args) {
 		
 		//log4j
-		//PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
-		PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
+		PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
+		//PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
 		
 		//start process gui
 		new ProcessGUI();

@@ -207,7 +207,7 @@ public class ProcessEngine {
 		}
 	}
 
-	public void finishTask(String taskName, int processId, String... additionalItemsInControl) throws ProcessException {
+	public void finishTask(String taskName, int processId) throws ProcessException {
 		logger.info("attempting to finish task '"+taskName+"'...");
 		ProcessTaskItem taskItem = (ProcessTaskItem) processElements.get(taskName);
 		try {
@@ -221,12 +221,10 @@ public class ProcessEngine {
 				Iterator<ProcessItem> iterator = taskItem.getFollowingItems().iterator();
 				ProcessItem item = iterator.next();
 				itemsInControl.add(item);
-				
-				//place additional items in control
-				for (String identifier : additionalItemsInControl) {
-					itemsInControl.add(processElements.get(identifier));
+				//place other open tasks as itemsin control
+				for (ProcessTask task : ProcessDAO.loadOpenTasks(processId)) {
+					itemsInControl.add(processElements.get(task.getName()));
 				}
-				
 				loop(processId);
 			} else {
 				throw new TaskUnresolvedException("task '"+taskName+"' was not resolved!");

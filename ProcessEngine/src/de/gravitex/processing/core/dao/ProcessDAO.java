@@ -33,6 +33,7 @@ public class ProcessDAO {
 	private static final int TASK_COLUMN_INDEX_ID = 1;
 	private static final int TASK_COLUMN_INDEX_NAME = 2;
 	private static final int TASK_COLUMN_INDEX_PROCESS_REF = 3;
+	private static final int TASK_COLUMN_INDEX_STATE = 4;
 	
 	public static int writeProcessInstance(String name, ProcessState processState, Date creationDate) {
 		ProcessEntity process = new ProcessEntity();
@@ -122,6 +123,8 @@ public class ProcessDAO {
 			ProcessTask task = new ProcessTask();
 			task.setId(taskId);
 			task.setName(rs.getString(TASK_COLUMN_INDEX_NAME));
+			task.setProcessId(rs.getInt(TASK_COLUMN_INDEX_PROCESS_REF));
+			task.setState(TaskState.valueOf(rs.getString(TASK_COLUMN_INDEX_STATE)));
 			return task;
 		} catch (Exception e) {
 			logger.error(e);
@@ -159,6 +162,40 @@ public class ProcessDAO {
 			st.executeUpdate(sql);
 		} catch (Exception e) {
 			logger.error(e);
+		}		
+	}
+	
+	public static void clearAll() {
+		Connection cn = null;
+		Statement st = null;
+		try {
+			cn = getConnection();
+			st = cn.createStatement();
+			String sqlDelTasks = "delete from process_task";
+			st.executeUpdate(sqlDelTasks);
+			String sqlDelProcesses = "delete from process_instance";
+			st.executeUpdate(sqlDelProcesses);			
+		} catch (Exception e) {
+			logger.error(e);
+		}
+	}
+	
+	public static List<ProcessTask> loadOpenTasks(int processId) {
+		Connection cn = null;
+		Statement st = null;
+		try {
+			cn = getConnection();
+			st = cn.createStatement();
+			String sqlFetchTaskIdsByProject = "select id from process_task where state = '"+TaskState.OPEN+"' and processid = " + processId;
+			ResultSet rs = st.executeQuery(sqlFetchTaskIdsByProject);
+			List<ProcessTask> taskList = new ArrayList<>();
+			while (rs.next()) {
+				taskList.add(loadTask(rs.getInt(1)));
+			}			
+			return taskList;
+		} catch (Exception e) {
+			logger.error(e);
+			return null;
 		}		
 	}
 

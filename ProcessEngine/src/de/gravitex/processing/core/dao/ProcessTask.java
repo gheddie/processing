@@ -6,6 +6,8 @@ public class ProcessTask extends AbstractEntity {
 
 	private String name;
 	
+	private int processId;
+	
 	private TaskState state;
 	
 	public String getName() {
@@ -14,6 +16,14 @@ public class ProcessTask extends AbstractEntity {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public int getProcessId() {
+		return processId;
+	}
+	
+	public void setProcessId(int processId) {
+		this.processId = processId;
 	}
 	
 	public TaskState getState() {
