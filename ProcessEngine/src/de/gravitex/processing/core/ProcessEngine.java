@@ -31,7 +31,7 @@ public class ProcessEngine {
 
 	private List<ProcessTask> openTasks;
 
-//	private int processId;
+	private Set<ProcessItem> visitedItems;
 
 	public ProcessEngine() {
 		super();
@@ -41,6 +41,7 @@ public class ProcessEngine {
 	private void init() {
 		processElements = new HashMap<>();
 		itemsInControl = new HashSet<>();
+		visitedItems = new HashSet<>();
 	}
 
 	public void addElement(ProcessItem processElement) throws ProcessException {
@@ -54,24 +55,19 @@ public class ProcessEngine {
 		}
 
 		if (processElements.size() == 0) {
-//			if (processElement.getItemType().equals(ProcessItemType.START)) {
-//				// init items in control with start element
-//				itemsInControl.add(processElement);
-//			} else {
-//				throw new ProcessException("process must start with START element!");
-//			}
+			//...
 		} else {
 			if (processElements.get(processElement.getIdentifier()) != null) {
 				throw new ProcessException("duplicate identifier '"+processElement.getIdentifier()+"' detected.");
 			}
 		}
 
-		logger.info("adding process element : " + processElement);
+//		logger.info("adding process element : " + processElement);
 		processElements.put(processElement.getIdentifier(), processElement);
 	}
 
 	public void singleStep() {
-		logger.trace("stepping...");
+//		logger.info("stepping...");
 		Set<ProcessItem> newItemsInControl = new HashSet<>();
 		for (ProcessItem item : itemsInControl) {
 			//blocking item will not put following items but itself into the set
@@ -83,19 +79,12 @@ public class ProcessEngine {
 		}
 		itemsInControl = newItemsInControl;
 		for (ProcessItem item : itemsInControl) {
-			item.gainControl();
+			gainControl(item);
 		}
-		debugControl();
 	}
 
 	private void debugControl() {
 		if (itemsInControl.size() > 0) {
-			
-			//all blocking?
-//			if (allItemsInControlBlocking()) {
-//				logger.info(" ------------------------------ ALL BLOCKING ------------------------------ ");
-//			}
-			
 			logger.info("---------------------------------");
 			for (ProcessItem item : itemsInControl) {
 				logger.info("IN CONTROL : " + item);
@@ -134,10 +123,21 @@ public class ProcessEngine {
 	
 	public int startProcess() throws ProcessException {
 		//put start item in control
-		itemsInControl.add(findStartItem());
+		ProcessItem startItem = findStartItem();
+		gainControl(startItem);
+		itemsInControl.add(startItem);
 		int processId = ProcessDAO.writeProcessInstance("klaus", ProcessState.RUNNING, new Date());
 		loop(processId);
 		return processId;
+	}
+
+	private void gainControl(ProcessItem item) {
+		if (!(visitedItems.contains(item))) {
+			item.gainControl();
+			visitedItems.add(item);
+		} else {
+			logger.info("item '"+item.getIdentifier()+"' already visited ---> returning.");
+		}	
 	}
 
 	private ProcessItem findStartItem() throws ProcessException {
@@ -175,7 +175,7 @@ public class ProcessEngine {
 
 	private boolean taskActuallyOpen(String identifier) {
 		if (openTasks == null) {
-			logger.info("no open tasks present --> skipping '"+identifier+"'.");
+//			logger.info("no open tasks present --> skipping '"+identifier+"'.");
 			return false;
 		}
 		for (ProcessTask openTask : openTasks) {
@@ -225,6 +225,7 @@ public class ProcessEngine {
 				Iterator<ProcessItem> iterator = taskItem.getFollowingItems().iterator();
 				ProcessItem item = iterator.next();
 				itemsInControl.add(item);
+				gainControl(item);
 				//place other open tasks as itemsin control
 				openTasks = ProcessDAO.loadOpenTasks(processId);
 				for (ProcessTask task : openTasks) {

@@ -26,4 +26,8 @@ public class ProcessTaskItem extends ProcessItem {
 	public Class<? extends TaskResolver> getResolverClass() {
 		return resolverClass;
 	}
+	
+	public void gainControl() {
+		// just do nothing...
+	}
 }
