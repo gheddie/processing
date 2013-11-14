@@ -3,12 +3,15 @@ package de.gravitex.processing.testing;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import de.gravitex.processing.core.ProcessEngine;
@@ -16,6 +19,8 @@ import de.gravitex.processing.core.dao.ProcessDAO;
 import de.gravitex.processing.core.exception.ProcessException;
 
 public class ProcessGUI extends JFrame {
+	
+	private static Logger logger = Logger.getLogger(ProcessGUI.class);
 
 	private static final long serialVersionUID = 1L;
 	
@@ -41,13 +46,16 @@ public class ProcessGUI extends JFrame {
 		//------------------------------------------------
 		btnStart = new JButton("start");
 		btnStart.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent event) {
 				initProcess();
-				ProcessDAO.clearAll();
+				Connection connection = null;
 				try {
-				 processId = processContainer.startProcess();
-				} catch (ProcessException e1) {
-					e1.printStackTrace();
+					connection = ProcessDAO.getConnection();
+					ProcessDAO.clearAll(connection);
+					processId = processContainer.startProcess();
+					ProcessDAO.returnConnection(connection);
+				} catch (ClassNotFoundException | SQLException | ProcessException e) {
+					logger.error(e);
 				}
 			}
 		});		

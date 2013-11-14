@@ -1,5 +1,7 @@
 package de.gravitex.processing.core;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -83,6 +85,7 @@ public class ProcessEngine {
 		}
 	}
 
+	/*
 	private void debugControl() {
 		if (itemsInControl.size() > 0) {
 			logger.info("---------------------------------");
@@ -96,6 +99,7 @@ public class ProcessEngine {
 			logger.info("---------------------------------");
 		}
 	}
+	*/
 
 	public void relateParentFromTo(String parentIdentifier, String itemIdentifier) throws ProcessException {
 
@@ -126,9 +130,17 @@ public class ProcessEngine {
 		ProcessItem startItem = findStartItem();
 		gainControl(startItem);
 		itemsInControl.add(startItem);
-		int processId = ProcessDAO.writeProcessInstance("klaus", ProcessState.RUNNING, new Date());
-		loop(processId);
-		return processId;
+		Connection connection = null;
+		try {
+			connection = ProcessDAO.getConnection();
+			int processId = ProcessDAO.writeProcessInstance("klaus", ProcessState.RUNNING, new Date(), connection );
+			loop(processId);
+			ProcessDAO.returnConnection(connection);
+			return processId;
+		} catch (ClassNotFoundException | SQLException e) {
+			logger.error(e);
+			return -1;
+		}
 	}
 
 	private void gainControl(ProcessItem item) {
@@ -150,15 +162,10 @@ public class ProcessEngine {
 	}
 
 	private void loop(int processId) {
-		try {
-			while (!(allItemsInControlBlocking())) {
-				singleStep();
-				Thread.sleep(2500);
-			}
-			persistActualProcessState(processId);
-		} catch (InterruptedException e) {
-			logger.error(e);
+		while (!(allItemsInControlBlocking())) {
+			singleStep();				
 		}
+		persistActualProcessState(processId);
 	}
 
 	private void persistActualProcessState(int processId) {
@@ -168,7 +175,14 @@ public class ProcessEngine {
 			task.setName(item.getIdentifier());
 			task.setState(TaskState.OPEN);
 			if (!(taskActuallyOpen(item.getIdentifier()))) {
-				ProcessDAO.writeProcessTask(processId, task);	
+				Connection connection;
+				try {
+					connection = ProcessDAO.getConnection();
+					ProcessDAO.writeProcessTask(processId, task, connection);
+					ProcessDAO.returnConnection(connection);
+				} catch (ClassNotFoundException | SQLException e) {
+					logger.error(e);
+				}				
 			}			
 		}
 	}
@@ -214,28 +228,31 @@ public class ProcessEngine {
 	public void finishTask(String taskName, int processId) throws ProcessException {
 		logger.info("attempting to finish task '"+taskName+"'...");
 		ProcessTaskItem taskItem = (ProcessTaskItem) processElements.get(taskName);
-		try {
+		Connection connection = null;
+		try {			
 			Class<? extends TaskResolver> resolverClass = (Class<? extends TaskResolver>) taskItem.getResolverClass();
 			if (resolverClass == null) {
 				throw new ProcessException("resolver class for task '"+taskName+"' must not be NULL!");
 			}
 			if (resolverClass.newInstance().isTaskResolved()) {
-				ProcessDAO.setTaskResolved(processId, taskName);	
+				connection = ProcessDAO.getConnection();
+				ProcessDAO.setTaskResolved(processId, taskName, connection);	
 				//put following item of task in control (task has only one following item)
 				Iterator<ProcessItem> iterator = taskItem.getFollowingItems().iterator();
 				ProcessItem item = iterator.next();
 				itemsInControl.add(item);
 				gainControl(item);
 				//place other open tasks as itemsin control
-				openTasks = ProcessDAO.loadOpenTasks(processId);
+				openTasks = ProcessDAO.loadOpenTasks(processId, connection);
 				for (ProcessTask task : openTasks) {
 					itemsInControl.add(processElements.get(task.getName()));
 				}
 				loop(processId);
+				ProcessDAO.returnConnection(connection);
 			} else {
 				throw new TaskUnresolvedException("task '"+taskName+"' was not resolved!");
 			}			
-		} catch (InstantiationException | IllegalAccessException e) {
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
 			logger.error(e);
 		}
 	}
