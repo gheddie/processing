@@ -75,40 +75,7 @@ public class ProcessGUI extends JFrame {
 	}
 
 	private void initProcess() {
-
-		// OK
-		// processContainer = ProcessDefinitionProvider.getT4();
-
-		// OK
-		//processContainer = ProcessDefinitionProvider.getT5();
-
-		// OK
-		// processContainer = ProcessDefinitionProvider.getT6();
-		
-		// processContainer = ProcessDefinitionProvider.getT7();
-		
-		// processContainer = ProcessDefinitionProvider.getHaftungsSumme();
-		
-//		 processContainer = ProcessDefinitionProvider.getBewerbung();
-		
-		// processContainer = ProcessDefinitionProvider.getReferenceProcess();
-		
-		// processContainer = ProcessDefinitionProvider.getReferenceProcessFromWork();
-		
-		// processContainer = ProcessDefinitionProvider.getLinearProcess();
-		
-		processContainer = ProcessDefinitionProvider.getTestTimer();
-		
-//		processContainer = ProcessDefinitionProvider.getLinearHomeProcess();
-		//---
-		/*
-		processContainer.clearItemsInControl();
-		try {
-			processContainer.adaptItemsInControl("ac21", "ac13", "end4");
-		} catch (ProcessException e) {
-			e.printStackTrace();
-		}
-		*/
+		processContainer = ProcessDefinitionProvider.getBewerbung();
 	}
 	
 	// ---

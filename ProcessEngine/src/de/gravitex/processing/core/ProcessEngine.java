@@ -97,7 +97,7 @@ public class ProcessEngine {
 		}
 	}
 
-	public void relateParent(String itemIdentifier, String parentIdentifier) throws ProcessException {
+	public void relateParentFromTo(String parentIdentifier, String itemIdentifier) throws ProcessException {
 
 		ProcessItem item = processElements.get(itemIdentifier);
 		if (item == null) {

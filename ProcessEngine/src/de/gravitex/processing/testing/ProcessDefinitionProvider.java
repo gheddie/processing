@@ -14,7 +14,7 @@ import de.gravitex.processing.testing.appliance.decision.DecisionInterestPotenti
 import de.gravitex.processing.testing.decision.DecisionForA1;
 import de.gravitex.processing.testing.decision.DecisionForA2;
 import de.gravitex.processing.testing.decision.DecisionForA3;
-import de.gravitex.processing.testing.taskresolver.appliance.GenericApplianceResolver;
+import de.gravitex.processing.testing.taskresolver.appliance.GenericTrueResolver;
 import de.gravitex.processing.testing.taskresolver.linear.ResolveT1;
 import de.gravitex.processing.testing.taskresolver.linear.ResolveT2;
 import de.gravitex.processing.testing.taskresolver.linear.ResolveT3;
@@ -55,14 +55,14 @@ public class ProcessDefinitionProvider {
 			processContainer.addElement(e2);
 			
 			//parent relations
-			processContainer.relateParent("a1", "s1");
-			processContainer.relateParent("f1", "a1");
+			processContainer.relateParentFromTo("s1", "a1");
+			processContainer.relateParentFromTo("a1", "f1");
 			
-			processContainer.relateParent("a2", "f1");
-			processContainer.relateParent("a3", "f1");
+			processContainer.relateParentFromTo("f1", "a2");
+			processContainer.relateParentFromTo("f1", "a3");
 			
-			processContainer.relateParent("e1", "a2");
-			processContainer.relateParent("e2", "a3");
+			processContainer.relateParentFromTo("a2", "e1");
+			processContainer.relateParentFromTo("a3", "e2");
 			
 		} catch (ProcessException e) {
 			e.printStackTrace();
@@ -98,17 +98,17 @@ public class ProcessDefinitionProvider {
 			processContainer.addElement(e1);
 			
 			//parent relations
-			processContainer.relateParent("f1", "s1");
+			processContainer.relateParentFromTo("s1", "f1");
 			
-			processContainer.relateParent("a1", "f1");
-			processContainer.relateParent("a2", "f1");
-			processContainer.relateParent("a3", "f1");
+			processContainer.relateParentFromTo("f1", "a1");
+			processContainer.relateParentFromTo("f1", "a2");
+			processContainer.relateParentFromTo("f1", "a3");
 			
-			processContainer.relateParent("j1", "a1");
-			processContainer.relateParent("j1", "a2");
-			processContainer.relateParent("j1", "a3");
+			processContainer.relateParentFromTo("a1", "j1");
+			processContainer.relateParentFromTo("a2", "j1");
+			processContainer.relateParentFromTo("a3", "j1");
 			
-			processContainer.relateParent("e1", "j1");
+			processContainer.relateParentFromTo("j1", "e1");
 			
 			//conditions
 			processContainer.addCondition("f1", "a1", DecisionForA1.class);
@@ -150,14 +150,14 @@ public class ProcessDefinitionProvider {
 			processContainer.addElement(e2);
 			
 			//relations
-			processContainer.relateParent("j1", "s1");
-			processContainer.relateParent("a1", "j1");
-			processContainer.relateParent("f1", "a1");
-			processContainer.relateParent("f2", "f1");
-			processContainer.relateParent("e1", "f2");
-			processContainer.relateParent("e2", "f2");
-			processContainer.relateParent("a2", "f1");
-			processContainer.relateParent("j1", "a2");
+			processContainer.relateParentFromTo("s1", "j1");
+			processContainer.relateParentFromTo("j1", "a1");
+			processContainer.relateParentFromTo("a1", "f1");
+			processContainer.relateParentFromTo("f1", "f2");
+			processContainer.relateParentFromTo("f2", "e1");
+			processContainer.relateParentFromTo("f2", "e2");
+			processContainer.relateParentFromTo("f1", "a2");
+			processContainer.relateParentFromTo("a2", "j1");
 			
 		} catch (ProcessException e) {
 			e.printStackTrace();
@@ -174,157 +174,114 @@ public class ProcessDefinitionProvider {
 	public static ProcessEngine getBewerbung() {
 		
 		ProcessEngine processContainer = new ProcessEngine();
-		
 		try {
-			ProcessItem start1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "start", null);
-			processContainer.addElement(start1);
-			
-			ProcessItem gatherData = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "gatherData", null);
-			processContainer.addElement(gatherData);
-			
-			ProcessItem acknowledgeData = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "acknowledgeData", null);
-			processContainer.addElement(acknowledgeData);
-			
-			ProcessItem sightData = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "sightData", null);
-			processContainer.addElement(sightData);
-			
-			ProcessItem fork1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork1", null);
-			processContainer.addElement(fork1);
-			
-			ProcessItem join1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "join1", null);
-			processContainer.addElement(join1);
-			
-			ProcessItem deleteData1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "deleteData1", null);
-			processContainer.addElement(deleteData1);
-			
+			//action
+			ProcessItem delData1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "delData1", null);
+			processContainer.addElement(delData1);
+			ProcessItem delData2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "delData2", null);
+			processContainer.addElement(delData2);
 			ProcessItem revoke = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "revoke", null);
 			processContainer.addElement(revoke);
-			
-			ProcessItem end1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end1", null);
-			processContainer.addElement(end1);
-			
-			ProcessItem join2 = ProcessItemFactory.getProcessElement(ProcessItemType.JOIN, "join2", null);
-			processContainer.addElement(join2);
-			
-			ProcessItem appoint = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "appoint", null);
-			processContainer.addElement(appoint);
-			
-			ProcessItem fork2 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork2", null);
-			processContainer.addElement(fork2);
-			
-			ProcessItem writeHRDB = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "writeHRDB", null);
-			processContainer.addElement(writeHRDB);
-			
+			ProcessItem acknowledgeData = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "acknowledgeData", null);
+			processContainer.addElement(acknowledgeData);
 			ProcessItem infoMail = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "infoMail", null);
 			processContainer.addElement(infoMail);
-			
-			ProcessItem end2 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end2", null);
-			processContainer.addElement(end2);
-			
-			ProcessItem askStoreData = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "askStoreData", null);
-			processContainer.addElement(askStoreData);
-			
-			ProcessItem storeAnswer = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "storeAnswer", null);
-			processContainer.addElement(storeAnswer);
-			
-			ProcessItem fork3 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork3", null);
-			processContainer.addElement(fork3);
-			
-			ProcessItem ackNoStorage = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ackNoStorage", null);
-			processContainer.addElement(ackNoStorage);
-			
-			ProcessItem deleteData2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "deleteData2", null);
-			processContainer.addElement(deleteData2);
-			
-			ProcessItem end3 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end3", null);
-			processContainer.addElement(end3);
-			
-			ProcessItem fork4 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork4", null);
-			processContainer.addElement(fork4);
-			
-			ProcessItem wait1 = ProcessItemFactory.getProcessElement(ProcessItemType.WAIT, "wait1", null);
-			processContainer.addElement(wait1);
-			
 			ProcessItem confStoreData = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "confStoreData", null);
 			processContainer.addElement(confStoreData);
+			ProcessItem ackNoStorage = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ackNoStorage", null);
+			processContainer.addElement(ackNoStorage);
+			ProcessItem askStoreData = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "askStoreData", null);
+			processContainer.addElement(askStoreData);
+
+			//task
+			ProcessItem gatherData = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "gatherData", null);
+			processContainer.addElement(gatherData);
+			ProcessItem sightData = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "sightData", null);
+			processContainer.addElement(sightData);
+			ProcessItem appoint = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "appoint", null);
+			processContainer.addElement(appoint);
+			ProcessItem writeHrDB = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "writeHrDB", null);
+			processContainer.addElement(writeHrDB);
+			ProcessItem storePotDB = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "storePotDB", null);
+			processContainer.addElement(storePotDB);
+			ProcessItem storeAnswer = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "storeAnswer", null);
+			processContainer.addElement(storeAnswer);
+
+			//timer
+			ProcessItem timer1 = ProcessItemFactory.getProcessElement(ProcessItemType.WAIT, "timer1", null);
+			processContainer.addElement(timer1);
+
+			//join
+			ProcessItem join1 = ProcessItemFactory.getProcessElement(ProcessItemType.JOIN, "join1", null);
+			processContainer.addElement(join1);
+			ProcessItem join2 = ProcessItemFactory.getProcessElement(ProcessItemType.JOIN, "join2", null);
+			processContainer.addElement(join2);
+
 			
-			ProcessItem storeDataPot = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "storeDataPot", null);
-			processContainer.addElement(storeDataPot);
-			
+			//fork
+			ProcessItem fork1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork1", null);
+			processContainer.addElement(fork1);
+			ProcessItem fork2 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork2", null);
+			processContainer.addElement(fork2);
+			ProcessItem fork3 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork3", null);
+			processContainer.addElement(fork3);
+			ProcessItem fork4 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork4", null);
+			processContainer.addElement(fork4);
+
+			//start
+			ProcessItem start = ProcessItemFactory.getProcessElement(ProcessItemType.START, "start", null);
+			processContainer.addElement(start);
+
+			//end
+			ProcessItem end1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end1", null);
+			processContainer.addElement(end1);
+			ProcessItem end2 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end2", null);
+			processContainer.addElement(end2);
+			ProcessItem end3 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end3", null);
+			processContainer.addElement(end3);
 			ProcessItem end4 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end4", null);
 			processContainer.addElement(end4);
 			
-			//relations
-			processContainer.relateParent("gatherData", "start");
-			processContainer.relateParent("acknowledgeData", "gatherData");
-			processContainer.relateParent("sightData", "acknowledgeData");
-			processContainer.relateParent("fork1", "sightData");
-			processContainer.relateParent("join1", "fork1");
-			processContainer.relateParent("deleteData1", "join1");
-			processContainer.relateParent("revoke", "deleteData1");
-			processContainer.relateParent("end1", "revoke");
-			
-			processContainer.relateParent("join2", "fork1");
-			processContainer.relateParent("appoint", "join2");
-			processContainer.relateParent("fork2", "appoint");
-			
-			processContainer.relateParent("writeHRDB", "fork2");
-			processContainer.relateParent("infoMail", "writeHRDB");
-			processContainer.relateParent("end2", "infoMail");
-			
-			processContainer.relateParent("askStoreData", "fork1");
-			processContainer.relateParent("storeAnswer", "askStoreData");
-			processContainer.relateParent("fork3", "storeAnswer");
-			processContainer.relateParent("ackNoStorage", "fork3");
-			processContainer.relateParent("deleteData2", "ackNoStorage");
-			processContainer.relateParent("end3", "deleteData2");
-			
-			processContainer.relateParent("fork4", "fork2");
-			processContainer.relateParent("wait1", "fork4");
-			
-			processContainer.relateParent("join1", "fork4");
-			processContainer.relateParent("join2", "wait1");
-			
-			processContainer.relateParent("confStoreData", "fork3");
-			processContainer.relateParent("storeDataPot", "confStoreData");
-			processContainer.relateParent("end4", "storeDataPot");
-			
-			//task checkers
-			processContainer.addTaskResolver("gatherData", GenericApplianceResolver.class);
-			processContainer.addTaskResolver("sightData", GenericApplianceResolver.class);
-			
-			//conditions
-			processContainer.addCondition("fork1", "join1", DecisionInterestNone.class);
-			processContainer.addCondition("fork1", "askStoreData", DecisionInterestPotentially.class);
-			processContainer.addCondition("fork1", "join2", DecisionInterestHigh.class);
-			
-			return processContainer;
-			
-		} catch (ProcessException e) {
-			logger.error(e);
-			return null;
-		}
-	}
+			//relations						
+			/*01*/processContainer.relateParentFromTo("revoke", "end1");
+			/*02*/processContainer.relateParentFromTo("delData1", "revoke");
+			/*03*/processContainer.relateParentFromTo("join1", "delData1");
+			/*04*/processContainer.relateParentFromTo("fork1", "join1");
 
-	public static ProcessEngine getHaftungsSumme() {
-		
-		ProcessEngine processContainer = new ProcessEngine();
-				
-		try {
-			ProcessItem start1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "start1", null);
-			processContainer.addElement(start1);
+			/*06*/processContainer.relateParentFromTo("fork4", "join1");
+			/*07*/processContainer.relateParentFromTo("fork2", "fork4");
+			/*08*/processContainer.relateParentFromTo("fork2", "writeHrDB");
+			/*09*/processContainer.relateParentFromTo("writeHrDB", "infoMail");
+			/*10*/processContainer.relateParentFromTo("infoMail", "end2");
+			/*11*/processContainer.relateParentFromTo("fork1", "join2");
+			/*12*/processContainer.relateParentFromTo("fork1", "askStoreData");
+			/*13*/processContainer.relateParentFromTo("sightData", "fork1");
+			/*14*/processContainer.relateParentFromTo("acknowledgeData", "sightData");
+			/*15*/processContainer.relateParentFromTo("gatherData", "acknowledgeData");
+			/*16*/processContainer.relateParentFromTo("start", "gatherData");
+			/*17*/processContainer.relateParentFromTo("askStoreData", "storeAnswer");
+			/*18*/processContainer.relateParentFromTo("storeAnswer", "fork3");
+			/*19*/processContainer.relateParentFromTo("fork3", "ackNoStorage");
+			/*20*/processContainer.relateParentFromTo("fork3", "confStoreData");
+			/*21*/processContainer.relateParentFromTo("ackNoStorage", "delData2");
+			/*22*/processContainer.relateParentFromTo("confStoreData", "storePotDB");
+			/*23*/processContainer.relateParentFromTo("delData2", "end3");
+			/*24*/processContainer.relateParentFromTo("storePotDB", "end4");
+			/*25*/processContainer.relateParentFromTo("timer1", "join2");
+			/*26*/processContainer.relateParentFromTo("join2", "appoint");
+			/*27*/processContainer.relateParentFromTo("appoint", "fork2");
 			
-			ProcessItem acPrepareShare = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "acPrepareShare", "Dokumenten-Share vorbereiten");
-			processContainer.addElement(acPrepareShare);
+			/*99*/processContainer.relateParentFromTo("fork4", "timer1");
 			
-			ProcessItem taCalculateDebitSum = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "taCalculateDebitSum", "Dokumenten-Share vorbereiten");
-			processContainer.addElement(acPrepareShare);
-			
-			//relations
-			processContainer.relateParent("acPrepareShare", "start1");
+			//resolve
+			processContainer.addTaskResolver("gatherData", GenericTrueResolver.class);
+			processContainer.addTaskResolver("sightData", GenericTrueResolver.class);
+			processContainer.addTaskResolver("appoint", GenericTrueResolver.class);
+			processContainer.addTaskResolver("writeHrDB", GenericTrueResolver.class);
+			processContainer.addTaskResolver("storePotDB", GenericTrueResolver.class);
+			processContainer.addTaskResolver("storeAnswer", GenericTrueResolver.class);
 			
 			return processContainer;
-			
 		} catch (ProcessException e) {
 			logger.error(e);
 			return null;
@@ -368,26 +325,26 @@ public class ProcessDefinitionProvider {
 			processContainer.addElement(end2);
 			
 			//relations
-			processContainer.relateParent("itemA", "start");
-			processContainer.relateParent("itemB", "itemA");
-			processContainer.relateParent("fork1", "itemB");
+			processContainer.relateParentFromTo("start", "itemA");
+			processContainer.relateParentFromTo("itemA", "itemB");
+			processContainer.relateParentFromTo("itemB", "fork1");
 			
-			processContainer.relateParent("itemC", "fork1");
-			processContainer.relateParent("itemD", "itemC");
-			processContainer.relateParent("timer1", "fork1");
-			processContainer.relateParent("itemE", "timer1");
-			processContainer.relateParent("end1", "itemD");
+			processContainer.relateParentFromTo("fork1", "itemC");
+			processContainer.relateParentFromTo("itemC", "itemD");
+			processContainer.relateParentFromTo("fork1", "timer1");
+			processContainer.relateParentFromTo("timer1", "itemE");
+			processContainer.relateParentFromTo("itemD", "end1");
 			
-			processContainer.relateParent("fork2", "itemE");
+			processContainer.relateParentFromTo("itemE", "fork2");
 			
-			processContainer.relateParent("itemF", "fork2");
-			processContainer.relateParent("timer2", "fork2");
-			processContainer.relateParent("itemG", "timer2");
+			processContainer.relateParentFromTo("fork2", "itemF");
+			processContainer.relateParentFromTo("fork2", "timer2");
+			processContainer.relateParentFromTo("timer2", "itemG");
 			
-			processContainer.relateParent("join1", "itemF");
-			processContainer.relateParent("join1", "itemG");
+			processContainer.relateParentFromTo("itemF", "join1");
+			processContainer.relateParentFromTo("itemG", "join1");
 			
-			processContainer.relateParent("end2", "join1");
+			processContainer.relateParentFromTo("join1", "end2");
 			
 			return processContainer;
 			
@@ -422,19 +379,19 @@ public class ProcessDefinitionProvider {
 			processContainer.addElement(end2);
 			
 			//relations
-			processContainer.relateParent("ac1", "start");
-			processContainer.relateParent("t1", "ac1");
-			processContainer.relateParent("fork1", "t1");
+			processContainer.relateParentFromTo("start", "ac1");
+			processContainer.relateParentFromTo("ac1", "t1");
+			processContainer.relateParentFromTo("t1", "fork1");
 			
-			processContainer.relateParent("ac2", "fork1");
-			processContainer.relateParent("t2", "fork1");
+			processContainer.relateParentFromTo("fork1", "ac2");
+			processContainer.relateParentFromTo("fork1", "t2");
 			
-			processContainer.relateParent("end1", "ac2");
+			processContainer.relateParentFromTo("ac2", "end1");
 			
-			processContainer.relateParent("t2", "fork1");
-			processContainer.relateParent("ac3", "t2");
+			processContainer.relateParentFromTo("fork1", "t2");
+			processContainer.relateParentFromTo("t2", "ac3");
 			
-			processContainer.relateParent("end2", "ac3");
+			processContainer.relateParentFromTo("ac3", "end2");
 			
 			return processContainer;
 			
@@ -500,26 +457,26 @@ public class ProcessDefinitionProvider {
 			processContainer.addElement(end2);
 			
 			//relations
-			/*01*/processContainer.relateParent("ac1", 		"start");
-			/*02*/processContainer.relateParent("t1", 		"ac1");
-			/*03*/processContainer.relateParent("fork1", 	"t1");
-			/*04*/processContainer.relateParent("ac2", 		"fork1");
-			/*05*/processContainer.relateParent("t2", 		"fork1");
-			/*06*/processContainer.relateParent("t3", 		"ac2");
-			/*07*/processContainer.relateParent("t8", 		"t3");
-			/*08*/processContainer.relateParent("t6", 		"join2");
-			/*09*/processContainer.relateParent("ac4", 		"t6");
-			/*10*/processContainer.relateParent("end1", 	"ac4");
-			/*11*/processContainer.relateParent("join2", 	"t5");
-			/*12*/processContainer.relateParent("t7", 		"fork2");
-			/*13*/processContainer.relateParent("end2", 	"t7");
-			/*14*/processContainer.relateParent("t4", 		"fork2");
-			/*15*/processContainer.relateParent("join1", 	"t4");
-			/*16*/processContainer.relateParent("ac3", 		"join1");
-			/*17*/processContainer.relateParent("join1", 	"t2");
-			/*18*/processContainer.relateParent("fork2", 	"ac3");
-			/*19*/processContainer.relateParent("t5", 		"fork2");
-			/*20*/processContainer.relateParent("join2", 	"t8");
+			/*01*/processContainer.relateParentFromTo("start", 		"ac1");
+			/*02*/processContainer.relateParentFromTo("ac1", 		"t1");
+			/*03*/processContainer.relateParentFromTo("t1", 	"fork1");
+			/*04*/processContainer.relateParentFromTo("fork1", 		"ac2");
+			/*05*/processContainer.relateParentFromTo("fork1", 		"t2");
+			/*06*/processContainer.relateParentFromTo("ac2", 		"t3");
+			/*07*/processContainer.relateParentFromTo("t3", 		"t8");
+			/*08*/processContainer.relateParentFromTo("join2", 		"t6");
+			/*09*/processContainer.relateParentFromTo("t6", 		"ac4");
+			/*10*/processContainer.relateParentFromTo("ac4", 	"end1");
+			/*11*/processContainer.relateParentFromTo("t5", 	"join2");
+			/*12*/processContainer.relateParentFromTo("fork2", 		"t7");
+			/*13*/processContainer.relateParentFromTo("t7", 	"end2");
+			/*14*/processContainer.relateParentFromTo("fork2", 		"t4");
+			/*15*/processContainer.relateParentFromTo("t4", 	"join1");
+			/*16*/processContainer.relateParentFromTo("join1", 		"ac3");
+			/*17*/processContainer.relateParentFromTo("t2", 	"join1");
+			/*18*/processContainer.relateParentFromTo("ac3", 	"fork2");
+			/*19*/processContainer.relateParentFromTo("fork2", 		"t5");
+			/*20*/processContainer.relateParentFromTo("t8", 	"join2");
 			
 			//task checkers
 			processContainer.addTaskResolver("t1", ResolveT1.class);
@@ -622,50 +579,50 @@ public class ProcessDefinitionProvider {
 			processEngine.addElement(end4);
 			
 			//relate
-			processEngine.relateParent("ac1", "start");
-			processEngine.relateParent("ac2", "ac1");
-			processEngine.relateParent("t1", "ac2");
-			processEngine.relateParent("ac3", "t1");
-			processEngine.relateParent("fork1", "ac3");
+			processEngine.relateParentFromTo("start", "ac1");
+			processEngine.relateParentFromTo("ac1", "ac2");
+			processEngine.relateParentFromTo("ac2", "t1");
+			processEngine.relateParentFromTo("t1", "ac3");
+			processEngine.relateParentFromTo("ac3", "fork1");
 			
 			//relate left arm
-			processEngine.relateParent("ac4", "fork1");
-			processEngine.relateParent("t2", "ac4");
-			processEngine.relateParent("ac7", "t2");
-			processEngine.relateParent("ac8", "ac7");
-			processEngine.relateParent("ac17", "ac8");
-			processEngine.relateParent("ac18", "ac17");
-			processEngine.relateParent("ac19", "ac18");
-			processEngine.relateParent("t6", "ac19");
-			processEngine.relateParent("ac21", "t6");
-			processEngine.relateParent("ac22", "ac21");
-			processEngine.relateParent("ac23", "ac22");			
-			processEngine.relateParent("end1", "ac23");
+			processEngine.relateParentFromTo("fork1", "ac4");
+			processEngine.relateParentFromTo("ac4", "t2");
+			processEngine.relateParentFromTo("t2", "ac7");
+			processEngine.relateParentFromTo("ac7", "ac8");
+			processEngine.relateParentFromTo("ac8", "ac17");
+			processEngine.relateParentFromTo("ac17", "ac18");
+			processEngine.relateParentFromTo("ac18", "ac19");
+			processEngine.relateParentFromTo("ac19", "t6");
+			processEngine.relateParentFromTo("t6", "ac21");
+			processEngine.relateParentFromTo("ac21", "ac22");
+			processEngine.relateParentFromTo("ac22", "ac23");			
+			processEngine.relateParentFromTo("ac23", "end1");
 			
 			//relate right arm
-			processEngine.relateParent("ac5", "fork1");
-			processEngine.relateParent("ac6", "ac5");
-			processEngine.relateParent("ac9", "ac6");
-			processEngine.relateParent("t3", "ac9");
-			processEngine.relateParent("fork2", "t3");
+			processEngine.relateParentFromTo("fork1", "ac5");
+			processEngine.relateParentFromTo("ac5", "ac6");
+			processEngine.relateParentFromTo("ac6", "ac9");
+			processEngine.relateParentFromTo("ac9", "t3");
+			processEngine.relateParentFromTo("t3", "fork2");
 			
 			//relate arm_x
-			processEngine.relateParent("ac10", "fork2");
-			processEngine.relateParent("ac11", "ac10");
-			processEngine.relateParent("ac12", "ac11");
-			processEngine.relateParent("end2", "ac12");
+			processEngine.relateParentFromTo("fork2", "ac10");
+			processEngine.relateParentFromTo("ac10", "ac11");
+			processEngine.relateParentFromTo("ac11", "ac12");
+			processEngine.relateParentFromTo("ac12", "end2");
 			
 			//relate arm_y
-			processEngine.relateParent("t4", "fork2");
-			processEngine.relateParent("ac13", "t4");
-			processEngine.relateParent("ac14", "ac13");
-			processEngine.relateParent("end3", "ac14");
+			processEngine.relateParentFromTo("fork2", "t4");
+			processEngine.relateParentFromTo("t4", "ac13");
+			processEngine.relateParentFromTo("ac13", "ac14");
+			processEngine.relateParentFromTo("ac14", "end3");
 			
 			//relate arm_z
-			processEngine.relateParent("ac15", "fork2");
-			processEngine.relateParent("ac16", "ac15");
-			processEngine.relateParent("t5", "ac16");
-			processEngine.relateParent("end4", "t5");
+			processEngine.relateParentFromTo("fork2", "ac15");
+			processEngine.relateParentFromTo("ac15", "ac16");
+			processEngine.relateParentFromTo("ac16", "t5");
+			processEngine.relateParentFromTo("t5", "end4");
 			
 			//task checkers
 			processEngine.addTaskResolver("t1", ResolveT1.class);
@@ -695,10 +652,10 @@ public class ProcessDefinitionProvider {
 			processEngine.addElement(end);
 			
 			//relate
-			processEngine.relateParent("ac1", "start");
-			processEngine.relateParent("timer1", "ac1");
-			processEngine.relateParent("ac2", "timer1");
-			processEngine.relateParent("end", "ac2");
+			processEngine.relateParentFromTo("start", "ac1");
+			processEngine.relateParentFromTo("ac1", "timer1");
+			processEngine.relateParentFromTo("timer1", "ac2");
+			processEngine.relateParentFromTo("ac2", "end");
 			
 			return processEngine;
 			
