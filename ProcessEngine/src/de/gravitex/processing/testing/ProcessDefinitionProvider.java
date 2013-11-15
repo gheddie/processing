@@ -11,6 +11,7 @@ import de.gravitex.processing.testing.action.ActionA2;
 import de.gravitex.processing.testing.decision.DecisionForA1;
 import de.gravitex.processing.testing.decision.DecisionForA2;
 import de.gravitex.processing.testing.decision.DecisionForA3;
+import de.gravitex.processing.testing.taskresolver.appliance.GenericFalseResolver;
 import de.gravitex.processing.testing.taskresolver.appliance.GenericTrueResolver;
 import de.gravitex.processing.testing.taskresolver.linear.ResolveT1;
 import de.gravitex.processing.testing.taskresolver.linear.ResolveT2;
@@ -25,149 +26,6 @@ public class ProcessDefinitionProvider {
 	
 	private static Logger			logger					= Logger.getLogger(ProcessDefinitionProvider.class);
 
-	public static ProcessEngine getT4() {
-		
-		ProcessEngine processContainer = new ProcessEngine();
-		
-		try {
-			ProcessItem s1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "s1", null);
-			processContainer.addElement(s1);
-			
-			ProcessItem a1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a1", null);
-			processContainer.addElement(a1);
-			
-			ProcessItem f1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "f1", null);
-			processContainer.addElement(f1);
-			
-			ProcessItem a2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a2", null);
-			processContainer.addElement(a2);
-			
-			ProcessItem a3 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a3", null);
-			processContainer.addElement(a3);
-			
-			ProcessItem e1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e1", null);
-			processContainer.addElement(e1);
-			
-			ProcessItem e2 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e2", null);
-			processContainer.addElement(e2);
-			
-			//parent relations
-			processContainer.relateParentFromTo("s1", "a1");
-			processContainer.relateParentFromTo("a1", "f1");
-			
-			processContainer.relateParentFromTo("f1", "a2");
-			processContainer.relateParentFromTo("f1", "a3");
-			
-			processContainer.relateParentFromTo("a2", "e1");
-			processContainer.relateParentFromTo("a3", "e2");
-			
-		} catch (ProcessException e) {
-			e.printStackTrace();
-		}
-		
-		return processContainer;
-	}
-
-	public static ProcessEngine getT5() {
-		
-		ProcessEngine processContainer = new ProcessEngine();
-		
-		try {
-			ProcessItem s1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "s1", null);
-			processContainer.addElement(s1);
-			
-			ProcessItem f1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "f1", null);
-			processContainer.addElement(f1);
-			
-			ProcessItem a1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a1", null);
-			processContainer.addElement(a1);
-			
-			ProcessItem a2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a2", null);
-			processContainer.addElement(a2);
-			
-			ProcessItem a3 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a3", null);
-			processContainer.addElement(a3);
-			
-			ProcessItem j1 = ProcessItemFactory.getProcessElement(ProcessItemType.JOIN, "j1", null);
-			processContainer.addElement(j1);
-			
-			ProcessItem e1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e1", null);
-			processContainer.addElement(e1);
-			
-			//parent relations
-			processContainer.relateParentFromTo("s1", "f1");
-			
-			processContainer.relateParentFromTo("f1", "a1");
-			processContainer.relateParentFromTo("f1", "a2");
-			processContainer.relateParentFromTo("f1", "a3");
-			
-			processContainer.relateParentFromTo("a1", "j1");
-			processContainer.relateParentFromTo("a2", "j1");
-			processContainer.relateParentFromTo("a3", "j1");
-			
-			processContainer.relateParentFromTo("j1", "e1");
-			
-			//conditions
-			processContainer.addCondition("f1", "a1", DecisionForA1.class);
-			processContainer.addCondition("f1", "a2", DecisionForA2.class);
-			processContainer.addCondition("f1", "a3", DecisionForA3.class);
-			
-			//action
-			processContainer.addAction("a2", ActionA2.class);
-			
-		} catch (ProcessException e) {
-			e.printStackTrace();
-		}
-		
-		return processContainer;
-	}
-
-	public static ProcessEngine getT6() {
-		
-		ProcessEngine processContainer = new ProcessEngine();
-		
-		try {
-			ProcessItem s1 = ProcessItemFactory.getProcessElement(ProcessItemType.START, "s1", null);
-			processContainer.addElement(s1);
-			
-			ProcessItem j1 = ProcessItemFactory.getProcessElement(ProcessItemType.JOIN, "j1", null);
-			processContainer.addElement(j1);
-			ProcessItem a1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a1", null);
-			processContainer.addElement(a1);
-			ProcessItem f1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "f1", null);
-			processContainer.addElement(f1);
-			ProcessItem a2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "a2", null);
-			processContainer.addElement(a2);
-			ProcessItem f2 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "f2", null);
-			processContainer.addElement(f2);
-			
-			ProcessItem e1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e1", null);
-			processContainer.addElement(e1);
-			ProcessItem e2 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "e2", null);
-			processContainer.addElement(e2);
-			
-			//relations
-			processContainer.relateParentFromTo("s1", "j1");
-			processContainer.relateParentFromTo("j1", "a1");
-			processContainer.relateParentFromTo("a1", "f1");
-			processContainer.relateParentFromTo("f1", "f2");
-			processContainer.relateParentFromTo("f2", "e1");
-			processContainer.relateParentFromTo("f2", "e2");
-			processContainer.relateParentFromTo("f1", "a2");
-			processContainer.relateParentFromTo("a2", "j1");
-			
-		} catch (ProcessException e) {
-			e.printStackTrace();
-		}
-		
-		return processContainer;
-	}
-
-	public static ProcessEngine getT7() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	public static ProcessEngine getBewerbung() {
 		
 		ProcessEngine processContainer = new ProcessEngine();
@@ -276,7 +134,7 @@ public class ProcessDefinitionProvider {
 			processContainer.addTaskResolver("appoint", GenericTrueResolver.class);
 			processContainer.addTaskResolver("writeHrDB", GenericTrueResolver.class);
 			processContainer.addTaskResolver("storePotDB", GenericTrueResolver.class);
-			processContainer.addTaskResolver("storeAnswer", GenericTrueResolver.class);
+			processContainer.addTaskResolver("storeAnswer", GenericFalseResolver.class);
 			
 			return processContainer;
 		} catch (ProcessException e) {
@@ -639,8 +497,8 @@ public class ProcessDefinitionProvider {
 		try {
 			ProcessItem start = ProcessItemFactory.getProcessElement(ProcessItemType.START, "start", null);
 			processEngine.addElement(start);
-			ProcessItem ac1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac1", null);
-			processEngine.addElement(ac1);
+			ProcessItem t1 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t1", null);
+			processEngine.addElement(t1);
 			ProcessItem timer1 = ProcessItemFactory.getProcessElement(ProcessItemType.WAIT, "timer1", null);
 			processEngine.addElement(timer1);
 			ProcessItem ac2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac2", null);
@@ -649,10 +507,13 @@ public class ProcessDefinitionProvider {
 			processEngine.addElement(end);
 			
 			//relate
-			processEngine.relateParentFromTo("start", "ac1");
-			processEngine.relateParentFromTo("ac1", "timer1");
+			processEngine.relateParentFromTo("start", "t1");
+			processEngine.relateParentFromTo("t1", "timer1");
 			processEngine.relateParentFromTo("timer1", "ac2");
 			processEngine.relateParentFromTo("ac2", "end");
+			
+			//resolve
+			processEngine.addTaskResolver("t1", GenericTrueResolver.class);
 			
 			return processEngine;
 			

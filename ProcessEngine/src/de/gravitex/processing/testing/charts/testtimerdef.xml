@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process>
+	<element type="START">start</element>
+	<element type="TASK">t1</element>
+	<element type="WAIT">timer1</element>
+	<element type="ACTION">ac2</element>
+	<element type="END">end</element>
+</process>

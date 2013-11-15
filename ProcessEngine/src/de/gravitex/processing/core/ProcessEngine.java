@@ -148,7 +148,7 @@ public class ProcessEngine {
 			item.gainControl();
 			visitedItems.add(item);
 		} else {
-			logger.info("item '"+item.getIdentifier()+"' already visited ---> returning.");
+//			logger.info("item '"+item.getIdentifier()+"' already visited ---> returning.");
 		}	
 	}
 
@@ -194,7 +194,7 @@ public class ProcessEngine {
 		}
 		for (ProcessTask openTask : openTasks) {
 			if (openTask.getName().equals(identifier)) {
-				logger.info("task '"+identifier+"' is already marked as open --> skipping.");	
+//				logger.info("task '"+identifier+"' is already marked as open --> skipping.");	
 				return true;
 			}
 		}
@@ -226,7 +226,7 @@ public class ProcessEngine {
 	}
 
 	public void finishTask(String taskName, int processId) throws ProcessException {
-		logger.info("attempting to finish task '"+taskName+"'...");
+//		logger.info("attempting to finish task '"+taskName+"'...");
 		ProcessTaskItem taskItem = (ProcessTaskItem) processElements.get(taskName);
 		Connection connection = null;
 		try {			

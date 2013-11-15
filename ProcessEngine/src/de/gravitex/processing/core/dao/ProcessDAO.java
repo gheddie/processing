@@ -140,7 +140,7 @@ public class ProcessDAO {
 	}
 	
 	public static void setTaskResolved(int processId, String taskName, Connection connection) {
-		logger.info("setting task '"+taskName+"' to resolved...");
+//		logger.info("setting task '"+taskName+"' to resolved...");
 		Statement st = null;
 		try {
 			st = connection.createStatement();
@@ -168,7 +168,7 @@ public class ProcessDAO {
 		Statement st = null;
 		try {
 			st = connection.createStatement();
-			String sqlFetchTaskIdsByProject = "select id from process_task where state = '"+TaskState.OPEN+"' and processid = " + processId;
+			String sqlFetchTaskIdsByProject = "select id from process_task where state = '"+TaskState.OPEN+"' and processid = " + processId + " order by process_task.name asc";
 			ResultSet rs = st.executeQuery(sqlFetchTaskIdsByProject);
 			List<ProcessTask> taskList = new ArrayList<>();
 			while (rs.next()) {
