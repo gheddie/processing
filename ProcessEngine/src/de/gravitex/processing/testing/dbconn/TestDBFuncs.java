@@ -6,7 +6,7 @@ import org.apache.log4j.PropertyConfigurator;
 
 import de.gravitex.processing.core.ProcessState;
 import de.gravitex.processing.core.dao.ProcessEntity;
-import de.gravitex.processing.core.dao.ProcessTask;
+import de.gravitex.processing.core.dao.ProcessItemEntity;
 
 public class TestDBFuncs {
 
@@ -37,7 +37,7 @@ public class TestDBFuncs {
 	}
 
 	private static void testWriteTask() {
-		ProcessTask task = new ProcessTask();
+		ProcessItemEntity task = new ProcessItemEntity();
 		task.setName("test_task2");
 //		ProcessDAO.writeProcessTask(6, task);
 	}

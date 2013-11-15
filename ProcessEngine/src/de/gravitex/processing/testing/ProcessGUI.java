@@ -26,7 +26,7 @@ import org.w3c.dom.NodeList;
 
 import de.gravitex.processing.core.ProcessEngine;
 import de.gravitex.processing.core.dao.ProcessDAO;
-import de.gravitex.processing.core.dao.ProcessTask;
+import de.gravitex.processing.core.dao.ProcessItemEntity;
 import de.gravitex.processing.core.exception.ProcessException;
 import de.gravitex.processing.core.gui.ProcessTable;
 
@@ -114,7 +114,7 @@ public class ProcessGUI extends JFrame implements MouseListener {
 	}
 
 	private void fillOpenTasks(Connection connection) {
-		List<ProcessTask> openTasks = ProcessDAO.loadOpenTasks(processId, connection);
+		List<ProcessItemEntity> openTasks = ProcessDAO.loadOpenTasks(processId, connection);
 		tbProcesses.setData(openTasks);
 	}
 

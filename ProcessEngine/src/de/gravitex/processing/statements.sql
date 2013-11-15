@@ -1,5 +1,6 @@
 CREATE SEQUENCE processing_id_seq;
 
+--drop table process_instance;
 CREATE TABLE process_instance (
 	id INTEGER DEFAULT NEXTVAL('processing_id_seq'),
 	name VARCHAR(32),
@@ -7,13 +8,16 @@ CREATE TABLE process_instance (
 	creationDate timestamp,
 	primary key (id)
 	);
-	
-CREATE TABLE process_task (
+
+--drop table process_item;
+CREATE TABLE process_item (
 	id INTEGER DEFAULT NEXTVAL('processing_id_seq'),
 	name VARCHAR(32),
 	processId INTEGER,
 	state VARCHAR(32),
+	expiryDate timestamp,
+	itemType VARCHAR(32),
 	primary key (id)
 	);
 
-ALTER TABLE process_task ADD FOREIGN KEY (processId) REFERENCES process_instance (id);
+ALTER TABLE process_item ADD FOREIGN KEY (processId) REFERENCES process_instance (id);

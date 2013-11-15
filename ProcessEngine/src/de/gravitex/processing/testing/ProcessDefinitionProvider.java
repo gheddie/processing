@@ -134,7 +134,7 @@ public class ProcessDefinitionProvider {
 			processContainer.addTaskResolver("appoint", GenericTrueResolver.class);
 			processContainer.addTaskResolver("writeHrDB", GenericTrueResolver.class);
 			processContainer.addTaskResolver("storePotDB", GenericTrueResolver.class);
-			processContainer.addTaskResolver("storeAnswer", GenericFalseResolver.class);
+			processContainer.addTaskResolver("storeAnswer", GenericTrueResolver.class);
 			
 			return processContainer;
 		} catch (ProcessException e) {

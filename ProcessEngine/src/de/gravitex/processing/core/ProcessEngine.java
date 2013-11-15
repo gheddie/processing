@@ -12,7 +12,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import de.gravitex.processing.core.dao.ProcessDAO;
-import de.gravitex.processing.core.dao.ProcessTask;
+import de.gravitex.processing.core.dao.ProcessItemEntity;
 import de.gravitex.processing.core.exception.ProcessException;
 import de.gravitex.processing.core.exception.TaskUnresolvedException;
 import de.gravitex.processing.core.item.ProcessActionItem;
@@ -31,7 +31,7 @@ public class ProcessEngine {
 
 	private Set<ProcessItem> itemsInControl;
 
-	private List<ProcessTask> openTasks;
+	private List<ProcessItemEntity> openTasks;
 
 	private Set<ProcessItem> visitedItems;
 
@@ -169,16 +169,16 @@ public class ProcessEngine {
 	}
 
 	private void persistActualProcessState(int processId) {
-		ProcessTask task = null;
+		ProcessItemEntity task = null;
 		for (ProcessItem item : itemsInControl) {
-			task = new ProcessTask();
+			task = new ProcessItemEntity();
 			task.setName(item.getIdentifier());
 			task.setState(TaskState.OPEN);
 			if (!(taskActuallyOpen(item.getIdentifier()))) {
 				Connection connection;
 				try {
 					connection = ProcessDAO.getConnection();
-					ProcessDAO.writeProcessTask(processId, task, connection);
+					ProcessDAO.writeProcessItem(processId, task, connection);
 					ProcessDAO.returnConnection(connection);
 				} catch (ClassNotFoundException | SQLException e) {
 					logger.error(e);
@@ -192,7 +192,7 @@ public class ProcessEngine {
 //			logger.info("no open tasks present --> skipping '"+identifier+"'.");
 			return false;
 		}
-		for (ProcessTask openTask : openTasks) {
+		for (ProcessItemEntity openTask : openTasks) {
 			if (openTask.getName().equals(identifier)) {
 //				logger.info("task '"+identifier+"' is already marked as open --> skipping.");	
 				return true;
@@ -244,7 +244,7 @@ public class ProcessEngine {
 				gainControl(item);
 				//place other open tasks as itemsin control
 				openTasks = ProcessDAO.loadOpenTasks(processId, connection);
-				for (ProcessTask task : openTasks) {
+				for (ProcessItemEntity task : openTasks) {
 					itemsInControl.add(processElements.get(task.getName()));
 				}
 				loop(processId);

@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import de.gravitex.processing.core.ProcessItemType;
 import de.gravitex.processing.core.ProcessState;
 import de.gravitex.processing.core.TaskState;
 
@@ -34,6 +35,8 @@ public class ProcessDAO {
 	private static final int TASK_COLUMN_INDEX_NAME = 2;
 	private static final int TASK_COLUMN_INDEX_PROCESS_REF = 3;
 	private static final int TASK_COLUMN_INDEX_STATE = 4;
+	private static final int TASK_COLUMN_INDEX_EXPIRY_DATE = 5;
+	private static final int TASK_COLUMN_INDEX_ITEMTYPE = 6;
 	
 	public static int writeProcessInstance(String name, ProcessState processState, Date creationDate, Connection connection) {
 		ProcessEntity process = new ProcessEntity();
@@ -76,24 +79,24 @@ public class ProcessDAO {
 		}
 	}
 
-	public static void writeProcessTask(int processId, ProcessTask task, Connection connection) {
+	public static void writeProcessItem(int processId, ProcessItemEntity task, Connection connection) {
 		Statement st = null;
 		try {
 			st = connection.createStatement();
-			String sql = "insert into process_task (name, processId, state) values ('" + task.getName() + "', '" + processId + "', '"+task.getState()+"')";
+			String sql = "insert into process_item (name, processId, state, expiryDate, itemType) values ('" + task.getName() + "', '" + processId + "', '"+task.getState()+"', '"+DAOUtils.formatDateForDB(new Date())+"', 'TASK')";
 			st.executeUpdate(sql);
 		} catch (Exception e) {
 			logger.error(e);
 		}
 	}
 
-	public static List<ProcessTask> loadTasksByProcess(ProcessEntity processInstance, Connection connection) {
+	public static List<ProcessItemEntity> loadTasksByProcess(ProcessEntity processInstance, Connection connection) {
 		Statement st = null;
 		try {
 			st = connection.createStatement();
-			String sql = "select * from process_task where processId = " + processInstance.getId();
+			String sql = "select * from process_item where processId = " + processInstance.getId();
 			ResultSet rs = st.executeQuery(sql);
-			List<ProcessTask> tasks = new ArrayList<>();
+			List<ProcessItemEntity> tasks = new ArrayList<>();
 			while (rs.next()) {
 				tasks.add(loadTask(rs.getLong(TASK_COLUMN_INDEX_ID), connection));
 			}
@@ -104,17 +107,19 @@ public class ProcessDAO {
 		}
 	}
 
-	public static ProcessTask loadTask(long taskId, Connection connection) {
+	public static ProcessItemEntity loadTask(long taskId, Connection connection) {
 		Statement st = null;
 		try {
 			st = connection.createStatement();
-			ResultSet rs = st.executeQuery("select * from process_task where id = " + taskId);
+			ResultSet rs = st.executeQuery("select * from process_item where id = " + taskId);
 			rs.next();
-			ProcessTask task = new ProcessTask();
+			ProcessItemEntity task = new ProcessItemEntity();
 			task.setId(taskId);
 			task.setName(rs.getString(TASK_COLUMN_INDEX_NAME));
 			task.setProcessId(rs.getInt(TASK_COLUMN_INDEX_PROCESS_REF));
 			task.setState(TaskState.valueOf(rs.getString(TASK_COLUMN_INDEX_STATE)));
+			task.setExpiryDate(DAOUtils.parseDBDate(rs.getString(TASK_COLUMN_INDEX_EXPIRY_DATE)));
+			task.setItemType(ProcessItemType.valueOf(rs.getString(TASK_COLUMN_INDEX_ITEMTYPE)));
 			return task;
 		} catch (Exception e) {
 			logger.error(e);
@@ -144,7 +149,7 @@ public class ProcessDAO {
 		Statement st = null;
 		try {
 			st = connection.createStatement();
-			String sql = "update process_task set state = '"+TaskState.FINISHED+"' where processId = "+processId+" and name = '"+taskName+"'";
+			String sql = "update process_item set state = '"+TaskState.FINISHED+"' where processId = "+processId+" and name = '"+taskName+"'";
 			st.executeUpdate(sql);
 		} catch (Exception e) {
 			logger.error(e);
@@ -155,7 +160,7 @@ public class ProcessDAO {
 		Statement st = null;
 		try {
 			st = connection.createStatement();
-			String sqlDelTasks = "delete from process_task";
+			String sqlDelTasks = "delete from process_item";
 			st.executeUpdate(sqlDelTasks);
 			String sqlDelProcesses = "delete from process_instance";
 			st.executeUpdate(sqlDelProcesses);			
@@ -164,13 +169,13 @@ public class ProcessDAO {
 		}
 	}
 	
-	public static List<ProcessTask> loadOpenTasks(int processId, Connection connection) {
+	public static List<ProcessItemEntity> loadOpenTasks(int processId, Connection connection) {
 		Statement st = null;
 		try {
 			st = connection.createStatement();
-			String sqlFetchTaskIdsByProject = "select id from process_task where state = '"+TaskState.OPEN+"' and processid = " + processId + " order by process_task.name asc";
+			String sqlFetchTaskIdsByProject = "select id from process_item where state = '"+TaskState.OPEN+"' and processid = " + processId + " order by process_item.name asc";
 			ResultSet rs = st.executeQuery(sqlFetchTaskIdsByProject);
-			List<ProcessTask> taskList = new ArrayList<>();
+			List<ProcessItemEntity> taskList = new ArrayList<>();
 			while (rs.next()) {
 				taskList.add(loadTask(rs.getInt(1), connection));
 			}			
