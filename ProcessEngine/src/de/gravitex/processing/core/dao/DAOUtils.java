@@ -10,17 +10,18 @@ public class DAOUtils {
 	
 	private static Logger logger = Logger.getLogger(DAOUtils.class);
 	
-	private static final SimpleDateFormat df_write = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-	
-	private static final SimpleDateFormat df_read = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public static String formatDateForDB(Date date) {
-		return df_write.format(date);
+		return df.format(date);
 	}
 
 	public static Date parseDBDate(String dateFromDB) {
+		if (dateFromDB == null) {
+			return null;
+		}
 		try {
-			return df_read.parse(dateFromDB);
+			return df.parse(dateFromDB);
 		} catch (ParseException e) {
 			logger.error(e);
 			return null;

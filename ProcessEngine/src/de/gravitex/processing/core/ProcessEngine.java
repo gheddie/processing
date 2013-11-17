@@ -2,6 +2,7 @@ package de.gravitex.processing.core;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,10 +16,12 @@ import de.gravitex.processing.core.dao.ProcessDAO;
 import de.gravitex.processing.core.dao.ProcessItemEntity;
 import de.gravitex.processing.core.exception.ProcessException;
 import de.gravitex.processing.core.exception.TaskUnresolvedException;
+import de.gravitex.processing.core.item.BlockingItem;
 import de.gravitex.processing.core.item.ProcessActionItem;
 import de.gravitex.processing.core.item.ProcessForkItem;
 import de.gravitex.processing.core.item.ProcessItem;
 import de.gravitex.processing.core.item.ProcessTaskItem;
+import de.gravitex.processing.core.item.ProcessWaitItem;
 import de.gravitex.processing.core.logic.FlowAction;
 import de.gravitex.processing.core.logic.FlowDecision;
 import de.gravitex.processing.core.logic.TaskResolver;
@@ -100,12 +103,18 @@ public class ProcessEngine {
 		}
 	}
 	*/
+	
+	public void relateParentFromTo(String parentIdentifier, String... childIdentifiers) throws ProcessException {
+		for (String childIdentifier : childIdentifiers) {
+			relateParentFromTo(parentIdentifier, childIdentifier);
+		}
+	}
 
-	public void relateParentFromTo(String parentIdentifier, String itemIdentifier) throws ProcessException {
+	public void relateParentFromTo(String parentIdentifier, String childIdentifier) throws ProcessException {
 
-		ProcessItem item = processElements.get(itemIdentifier);
+		ProcessItem item = processElements.get(childIdentifier);
 		if (item == null) {
-			throw new ProcessException("item not found while relating : '" + itemIdentifier + "'.");
+			throw new ProcessException("item not found while relating : '" + childIdentifier + "'.");
 		}
 
 		ProcessItem parent = processElements.get(parentIdentifier);
@@ -170,11 +179,15 @@ public class ProcessEngine {
 
 	private void persistActualProcessState(int processId) {
 		ProcessItemEntity task = null;
+		BlockingItem blockingItem = null;
 		for (ProcessItem item : itemsInControl) {
+			blockingItem = (BlockingItem) item;
 			task = new ProcessItemEntity();
-			task.setName(item.getIdentifier());
+			task.setName(blockingItem .getIdentifier());
 			task.setState(TaskState.OPEN);
-			if (!(taskActuallyOpen(item.getIdentifier()))) {
+			task.setItemType(blockingItem.getItemType());
+			task.setExpiryDate(blockingItem.calculateExpiryDate());
+			if (!(taskActuallyOpen(blockingItem.getIdentifier()))) {
 				Connection connection;
 				try {
 					connection = ProcessDAO.getConnection();
@@ -236,18 +249,8 @@ public class ProcessEngine {
 			}
 			if (resolverClass.newInstance().isTaskResolved()) {
 				connection = ProcessDAO.getConnection();
-				ProcessDAO.setTaskResolved(processId, taskName, connection);	
-				//put following item of task in control (task has only one following item)
-				Iterator<ProcessItem> iterator = taskItem.getFollowingItems().iterator();
-				ProcessItem item = iterator.next();
-				itemsInControl.add(item);
-				gainControl(item);
-				//place other open tasks as itemsin control
-				openTasks = ProcessDAO.loadOpenTasks(processId, connection);
-				for (ProcessItemEntity task : openTasks) {
-					itemsInControl.add(processElements.get(task.getName()));
-				}
-				loop(processId);
+				ProcessDAO.setBlockingItemResolved(processId, taskName, connection);	
+				loopFromHere(processId, taskItem, connection);
 				ProcessDAO.returnConnection(connection);
 			} else {
 				throw new TaskUnresolvedException("task '"+taskName+"' was not resolved!");
@@ -256,8 +259,53 @@ public class ProcessEngine {
 			logger.error(e);
 		}
 	}
+	
+	public void checkTimers(int processId) {
+		Connection connection;
+		try {
+			connection = ProcessDAO.getConnection();
+			List<ProcessItemEntity> openTimers = ProcessDAO.loadOpenTasks(processId, ProcessItemType.WAIT, connection);
+			logger.info(openTimers.size() + " open timers found.");
+			for (ProcessItemEntity openTimer : openTimers) {
+				String openTimerName = openTimer.getName();
+				logger.info("checking timer '"+openTimerName+"'...");
+				if (timerExpired(openTimer)) {
+					ProcessDAO.setBlockingItemResolved(processId, openTimerName, connection);
+					loopFromHere(processId, (BlockingItem) processElements.get(openTimerName), connection);	
+				} else {
+					logger.info("timer '"+openTimerName+"' has not expired yet --> still blocking.");
+				}
+			}
+			ProcessDAO.returnConnection(connection);
+		} catch (ClassNotFoundException | SQLException e) {
+			logger.error(e);
+		};
+	}
 
-	public void addTaskResolver(String itemIdentifier, Class<? extends TaskResolver> resolverClass) {
-		((ProcessTaskItem) processElements.get(itemIdentifier)).setResolverClass(resolverClass);
+	private boolean timerExpired(ProcessItemEntity entity) {
+		return Calendar.getInstance().getTime().after(entity.getExpiryDate());
+	}
+
+	private void loopFromHere(int processId, BlockingItem taskItem, Connection connection) {
+		
+		//put following item of task in control (task has only one following item)
+		Iterator<ProcessItem> iterator = taskItem.getFollowingItems().iterator();
+		ProcessItem item = iterator.next();
+		itemsInControl.add(item);
+		gainControl(item);
+		//place other open tasks as itemsin control
+		openTasks = ProcessDAO.loadOpenTasks(processId, ProcessItemType.TASK, connection);
+		for (ProcessItemEntity task : openTasks) {
+			itemsInControl.add(processElements.get(task.getName()));
+		}
+		loop(processId);
+	}
+
+	public void addTaskResolver(String itemIdentifier, Class<? extends TaskResolver> resolverClass) throws ProcessException {
+		ProcessTaskItem taskItem = (ProcessTaskItem) processElements.get(itemIdentifier);
+		if (taskItem == null) {
+			throw new ProcessException("can not add resolver to item '"+itemIdentifier+"' --> item not found.");
+		}
+		taskItem.setResolverClass(resolverClass);
 	}
 }

@@ -1,9 +1,11 @@
 package de.gravitex.processing.core.item;
 
+import java.util.Date;
+
 import de.gravitex.processing.core.ProcessItemType;
 import de.gravitex.processing.core.logic.TaskResolver;
 
-public class ProcessTaskItem extends ProcessItem {
+public class ProcessTaskItem extends BlockingItem {
 	
 	private Class<? extends TaskResolver> resolverClass;
 
@@ -29,5 +31,9 @@ public class ProcessTaskItem extends ProcessItem {
 	
 	public void gainControl() {
 		// just do nothing...
+	}
+
+	public Date calculateExpiryDate() {
+		return null;
 	}
 }

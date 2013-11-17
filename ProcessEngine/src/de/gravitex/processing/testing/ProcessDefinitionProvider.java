@@ -7,11 +7,6 @@ import de.gravitex.processing.core.ProcessItemFactory;
 import de.gravitex.processing.core.ProcessItemType;
 import de.gravitex.processing.core.exception.ProcessException;
 import de.gravitex.processing.core.item.ProcessItem;
-import de.gravitex.processing.testing.action.ActionA2;
-import de.gravitex.processing.testing.decision.DecisionForA1;
-import de.gravitex.processing.testing.decision.DecisionForA2;
-import de.gravitex.processing.testing.decision.DecisionForA3;
-import de.gravitex.processing.testing.taskresolver.appliance.GenericFalseResolver;
 import de.gravitex.processing.testing.taskresolver.appliance.GenericTrueResolver;
 import de.gravitex.processing.testing.taskresolver.linear.ResolveT1;
 import de.gravitex.processing.testing.taskresolver.linear.ResolveT2;
@@ -495,25 +490,83 @@ public class ProcessDefinitionProvider {
 		ProcessEngine processEngine = new ProcessEngine();
 		
 		try {
+			//start
 			ProcessItem start = ProcessItemFactory.getProcessElement(ProcessItemType.START, "start", null);
 			processEngine.addElement(start);
-			ProcessItem t1 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t1", null);
-			processEngine.addElement(t1);
-			ProcessItem timer1 = ProcessItemFactory.getProcessElement(ProcessItemType.WAIT, "timer1", null);
-			processEngine.addElement(timer1);
+			
+			//actions
+			ProcessItem ac1 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac1", null);
+			processEngine.addElement(ac1);
 			ProcessItem ac2 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac2", null);
 			processEngine.addElement(ac2);
-			ProcessItem end = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end", null);
-			processEngine.addElement(end);
+			ProcessItem ac3 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac3", null);
+			processEngine.addElement(ac3);
+			ProcessItem ac4 = ProcessItemFactory.getProcessElement(ProcessItemType.ACTION, "ac4", null);
+			processEngine.addElement(ac4);
+			
+			//tasks
+			ProcessItem t1 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t1", null);
+			processEngine.addElement(t1);
+			ProcessItem t2 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t2", null);
+			processEngine.addElement(t2);
+			ProcessItem t3 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t3", null);
+			processEngine.addElement(t3);
+			ProcessItem t4 = ProcessItemFactory.getProcessElement(ProcessItemType.TASK, "t4", null);
+			processEngine.addElement(t4);
+			
+			//forks
+			ProcessItem fork1 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork1", null);
+			processEngine.addElement(fork1);
+			ProcessItem fork2 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork2", null);
+			processEngine.addElement(fork2);
+			ProcessItem fork3 = ProcessItemFactory.getProcessElement(ProcessItemType.FORK, "fork3", null);
+			processEngine.addElement(fork3);
+			
+			//join
+			ProcessItem join1 = ProcessItemFactory.getProcessElement(ProcessItemType.JOIN, "join1", null);
+			processEngine.addElement(join1);
+			
+			//timer
+			ProcessItem timer1 = ProcessItemFactory.getProcessElement(ProcessItemType.WAIT, "timer1", null);
+			processEngine.addElement(timer1);
+			ProcessItem timer2 = ProcessItemFactory.getProcessElement(ProcessItemType.WAIT, "timer2", null);
+			processEngine.addElement(timer2);
+			ProcessItem timer3 = ProcessItemFactory.getProcessElement(ProcessItemType.WAIT, "timer3", null);
+			processEngine.addElement(timer3);
+			
+			//ends
+			ProcessItem end1 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end1", null);
+			processEngine.addElement(end1);
+			ProcessItem end2 = ProcessItemFactory.getProcessElement(ProcessItemType.END, "end2", null);
+			processEngine.addElement(end2);
 			
 			//relate
-			processEngine.relateParentFromTo("start", "t1");
-			processEngine.relateParentFromTo("t1", "timer1");
-			processEngine.relateParentFromTo("timer1", "ac2");
-			processEngine.relateParentFromTo("ac2", "end");
+			processEngine.relateParentFromTo("start", "ac1");
+			processEngine.relateParentFromTo("ac1", "join1");
+			processEngine.relateParentFromTo("join1", "t1");
+			processEngine.relateParentFromTo("t1", "ac2");
+			processEngine.relateParentFromTo("ac2", "fork1");
+			processEngine.relateParentFromTo("fork1", "ac3", "t3");
+			
+			
+			processEngine.relateParentFromTo("ac3", "timer1");
+			processEngine.relateParentFromTo("timer1", "t2");
+			processEngine.relateParentFromTo("t2", "fork2");
+			processEngine.relateParentFromTo("fork2", "end1", "timer3");
+			processEngine.relateParentFromTo("timer3", "t4");
+			processEngine.relateParentFromTo("t4", "join1");
+			
+			processEngine.relateParentFromTo("t3", "ac4");
+			processEngine.relateParentFromTo("ac4", "fork3");
+			processEngine.relateParentFromTo("fork3", "end2", "timer2");
+			
+			processEngine.relateParentFromTo("timer2", "join1");
 			
 			//resolve
 			processEngine.addTaskResolver("t1", GenericTrueResolver.class);
+			processEngine.addTaskResolver("t2", GenericTrueResolver.class);
+			processEngine.addTaskResolver("t3", GenericTrueResolver.class);
+			processEngine.addTaskResolver("t4", GenericTrueResolver.class);
 			
 			return processEngine;
 			

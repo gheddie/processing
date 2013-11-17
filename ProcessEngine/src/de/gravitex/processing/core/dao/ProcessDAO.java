@@ -83,7 +83,12 @@ public class ProcessDAO {
 		Statement st = null;
 		try {
 			st = connection.createStatement();
-			String sql = "insert into process_item (name, processId, state, expiryDate, itemType) values ('" + task.getName() + "', '" + processId + "', '"+task.getState()+"', '"+DAOUtils.formatDateForDB(new Date())+"', 'TASK')";
+			String sql = null;
+			if (task.getExpiryDate() != null) {
+				sql = "insert into process_item (name, processId, state, expiryDate, itemType) values ('" + task.getName() + "', '" + processId + "', '"+task.getState()+"', '"+DAOUtils.formatDateForDB(task.getExpiryDate())+"', '"+task.getItemType()+"')";	
+			} else {
+				sql = "insert into process_item (name, processId, state, expiryDate, itemType) values ('" + task.getName() + "', '" + processId + "', '"+task.getState()+"', null, '"+task.getItemType()+"')";
+			}
 			st.executeUpdate(sql);
 		} catch (Exception e) {
 			logger.error(e);
@@ -144,7 +149,7 @@ public class ProcessDAO {
 		}
 	}
 	
-	public static void setTaskResolved(int processId, String taskName, Connection connection) {
+	public static void setBlockingItemResolved(int processId, String taskName, Connection connection) {
 //		logger.info("setting task '"+taskName+"' to resolved...");
 		Statement st = null;
 		try {
@@ -156,24 +161,27 @@ public class ProcessDAO {
 		}		
 	}
 	
-	public static void clearAll(Connection connection) {
+	public static void clearAll() {
+		Connection connection = null;
 		Statement st = null;
 		try {
+			connection = ProcessDAO.getConnection();
 			st = connection.createStatement();
 			String sqlDelTasks = "delete from process_item";
 			st.executeUpdate(sqlDelTasks);
 			String sqlDelProcesses = "delete from process_instance";
-			st.executeUpdate(sqlDelProcesses);			
+			st.executeUpdate(sqlDelProcesses);		
+			ProcessDAO.returnConnection(connection);
 		} catch (Exception e) {
 			logger.error(e);
 		}
 	}
 	
-	public static List<ProcessItemEntity> loadOpenTasks(int processId, Connection connection) {
+	public static List<ProcessItemEntity> loadOpenTasks(int processId, ProcessItemType itemType, Connection connection) {
 		Statement st = null;
 		try {
 			st = connection.createStatement();
-			String sqlFetchTaskIdsByProject = "select id from process_item where state = '"+TaskState.OPEN+"' and processid = " + processId + " order by process_item.name asc";
+			String sqlFetchTaskIdsByProject = "select id from process_item where state = '"+TaskState.OPEN+"' and itemtype = '"+itemType+"' and processid = " + processId + " order by process_item.name asc";
 			ResultSet rs = st.executeQuery(sqlFetchTaskIdsByProject);
 			List<ProcessItemEntity> taskList = new ArrayList<>();
 			while (rs.next()) {

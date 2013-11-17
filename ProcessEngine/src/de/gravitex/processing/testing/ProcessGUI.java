@@ -25,6 +25,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.gravitex.processing.core.ProcessEngine;
+import de.gravitex.processing.core.ProcessItemType;
 import de.gravitex.processing.core.dao.ProcessDAO;
 import de.gravitex.processing.core.dao.ProcessItemEntity;
 import de.gravitex.processing.core.exception.ProcessException;
@@ -41,6 +42,8 @@ public class ProcessGUI extends JFrame implements MouseListener {
 	private JButton btnStart;
 
 	private JButton btnProceed;
+	
+	private JButton btnCheckTimers;
 
 	private ProcessEngine processContainer;
 
@@ -62,14 +65,11 @@ public class ProcessGUI extends JFrame implements MouseListener {
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				initProcess();
-				Connection connection = null;
 				try {
-					connection = ProcessDAO.getConnection();
-					ProcessDAO.clearAll(connection);
+					ProcessDAO.clearAll();
 					processId = processContainer.startProcess();
-					fillOpenTasks(connection);
-					ProcessDAO.returnConnection(connection);
-				} catch (ClassNotFoundException | SQLException | ProcessException e) {
+					fillOpenTasks();
+				} catch (ProcessException e) {
 					logger.error(e);
 				}
 			}
@@ -86,14 +86,19 @@ public class ProcessGUI extends JFrame implements MouseListener {
 				try {
 					processContainer.finishTask(taskToResume, processId);
 					taskToResume = null;
-					Connection connection = ProcessDAO.getConnection();
-					fillOpenTasks(connection);
-					ProcessDAO.returnConnection(connection);
-				} catch (ClassNotFoundException | SQLException e1) {
-					logger.error(e);
+					fillOpenTasks();
 				} catch (ProcessException pe) {
 					logger.warn(pe.getMessage());
 				}
+			}
+		});
+		// ------------------------------------------------
+		btnCheckTimers = new JButton("check timers");
+		btnCheckTimers.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				initProcess();
+				processContainer.checkTimers(processId);
+				fillOpenTasks();
 			}
 		});
 		// ------------------------------------------------
@@ -102,6 +107,7 @@ public class ProcessGUI extends JFrame implements MouseListener {
 		// ------------------------------------------------
 		tbMain.add(btnStart);
 		tbMain.add(btnProceed);
+		tbMain.add(btnCheckTimers);
 		add(tbMain, BorderLayout.NORTH);
 		// ------------------------------------------------
 		tbProcesses.addMouseListener(this);
@@ -110,12 +116,19 @@ public class ProcessGUI extends JFrame implements MouseListener {
 	}
 
 	private void initProcess() {
-		processContainer = ProcessDefinitionProvider.getBewerbung();
+		processContainer = ProcessDefinitionProvider.getTestTimer();
 	}
 
-	private void fillOpenTasks(Connection connection) {
-		List<ProcessItemEntity> openTasks = ProcessDAO.loadOpenTasks(processId, connection);
-		tbProcesses.setData(openTasks);
+	private void fillOpenTasks() {
+		Connection connection = null;
+		try {
+			connection = ProcessDAO.getConnection();
+			List<ProcessItemEntity> openTasks = ProcessDAO.loadOpenTasks(processId, ProcessItemType.TASK, connection );
+			tbProcesses.setData(openTasks);
+			ProcessDAO.returnConnection(connection);
+		} catch (ClassNotFoundException | SQLException e) {
+			logger.error(e);
+		}
 	}
 
 	// ---Listener Methods
@@ -172,8 +185,8 @@ public class ProcessGUI extends JFrame implements MouseListener {
 	public static void main(String[] args) {
 
 		// log4j
-		PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
-		// PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
+		//PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
+		PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
 
 		// start process gui
 		new ProcessGUI();
