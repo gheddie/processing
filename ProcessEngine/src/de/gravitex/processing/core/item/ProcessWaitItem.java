@@ -17,10 +17,6 @@ public class ProcessWaitItem extends BlockingItem {
 		return ProcessItemType.WAIT;
 	}
 	
-	public boolean isBlocking() {
-		return true;
-	}
-
 	public Class<? extends TaskResolver> getResolverClass() {
 		return GenericTrueResolver.class;
 	}

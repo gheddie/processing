@@ -261,26 +261,40 @@ public class ProcessEngine {
 		}
 	}
 	
-	public void checkTimers(int processId) {
+	public void checkBlockingItems(int processId) {
 		Connection connection;
 		try {
 			connection = ProcessDAO.getConnection();
-			List<ProcessItemEntity> openTimers = ProcessDAO.loadOpenTasks(processId, ProcessItemType.WAIT, connection);
-			logger.info(openTimers.size() + " open timers found.");
-			for (ProcessItemEntity openTimer : openTimers) {
-				String openTimerName = openTimer.getName();
-				logger.info("checking timer '"+openTimerName+"'...");
-				if (timerExpired(openTimer)) {
-					ProcessDAO.setBlockingItemResolved(processId, openTimerName, connection);
-					loopFromHere(processId, (BlockingItem) processElements.get(openTimerName), connection);	
-				} else {
-					logger.info("timer '"+openTimerName+"' has not expired yet --> still blocking.");
-				}
-			}
+			checkTimers(processId, connection);
+			checkJoins(processId, connection);
 			ProcessDAO.returnConnection(connection);
 		} catch (ClassNotFoundException | SQLException e) {
 			logger.error(e);
 		};
+	}
+
+	private void checkJoins(int processId, Connection connection) {
+		List<ProcessItemEntity> openJoins = ProcessDAO.loadOpenItems(processId, ProcessItemType.JOIN, connection);
+		for (ProcessItemEntity openJoin : openJoins) {
+			String openJoinName = openJoin.getName();
+			logger.info("checking join '"+openJoinName+"'...");
+			ProcessDAO.setBlockingItemResolved(processId, openJoinName, connection);
+			loopFromHere(processId, (BlockingItem) processElements.get(openJoinName), connection);
+		}		
+	}
+
+	private void checkTimers(int processId, Connection connection) {
+		List<ProcessItemEntity> openTimers = ProcessDAO.loadOpenItems(processId, ProcessItemType.WAIT, connection);
+		for (ProcessItemEntity openTimer : openTimers) {
+			String openTimerName = openTimer.getName();
+			logger.info("checking timer '"+openTimerName+"'...");
+			if (timerExpired(openTimer)) {
+				ProcessDAO.setBlockingItemResolved(processId, openTimerName, connection);
+				loopFromHere(processId, (BlockingItem) processElements.get(openTimerName), connection);	
+			} else {
+				logger.info("timer '"+openTimerName+"' has not expired yet --> still blocking.");
+			}
+		}
 	}
 
 	private boolean timerExpired(ProcessItemEntity entity) {
@@ -301,7 +315,7 @@ public class ProcessEngine {
 		itemsInControl.add(item);
 		gainControl(item);
 		//place other open tasks as itemsin control
-		openTasks = ProcessDAO.loadOpenTasks(processId, ProcessItemType.TASK, connection);
+		openTasks = ProcessDAO.loadOpenItems(processId, ProcessItemType.TASK, connection);
 		for (ProcessItemEntity task : openTasks) {
 			itemsInControl.add(processElements.get(task.getName()));
 		}

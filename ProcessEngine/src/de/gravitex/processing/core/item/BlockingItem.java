@@ -11,4 +11,8 @@ public abstract class BlockingItem extends ProcessItem {
 //	public abstract Class<? extends TaskResolver> getResolverClass();
 
 	public abstract Date calculateExpiryDate();
+	
+	public boolean isBlocking() {
+		return true;
+	}
 }

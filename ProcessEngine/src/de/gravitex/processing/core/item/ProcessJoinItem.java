@@ -1,8 +1,10 @@
 package de.gravitex.processing.core.item;
 
+import java.util.Date;
+
 import de.gravitex.processing.core.ProcessItemType;
 
-public class ProcessJoinItem extends ProcessItem {
+public class ProcessJoinItem extends BlockingItem {
 
 	public ProcessJoinItem(String identifier, String description) {
 		super(identifier, description);
@@ -12,7 +14,7 @@ public class ProcessJoinItem extends ProcessItem {
 		return ProcessItemType.JOIN;
 	}
 	
-	public boolean isBlocking() {
-		return false;
+	public Date calculateExpiryDate() {
+		return null;
 	}
 }

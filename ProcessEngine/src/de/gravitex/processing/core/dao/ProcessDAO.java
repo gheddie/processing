@@ -177,7 +177,7 @@ public class ProcessDAO {
 		}
 	}
 	
-	public static List<ProcessItemEntity> loadOpenTasks(int processId, ProcessItemType itemType, Connection connection) {
+	public static List<ProcessItemEntity> loadOpenItems(int processId, ProcessItemType itemType, Connection connection) {
 		Statement st = null;
 		try {
 			st = connection.createStatement();

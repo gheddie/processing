@@ -17,10 +17,6 @@ public class ProcessTaskItem extends BlockingItem {
 		return ProcessItemType.TASK;
 	}
 	
-	public boolean isBlocking() {
-		return true;
-	}
-
 	public void setResolverClass(Class<? extends TaskResolver> resolverClass) {
 		this.resolverClass = resolverClass;
 	}

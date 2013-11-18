@@ -57,7 +57,7 @@ public class ProcessGUI extends JFrame implements MouseListener {
 		public void run() {
 			while (true) {
 				try {
-					logger.info("thread is checking timers...");
+//					logger.info("thread is checking timers...");
 					checkTimers();
 					Thread.sleep(CHECK_TIMER_INTERVAL);
 				} catch (InterruptedException e) {
@@ -123,19 +123,19 @@ public class ProcessGUI extends JFrame implements MouseListener {
 	
 	private void checkTimers() {
 		initProcess();
-		processEngine.checkTimers(processId);
+		processEngine.checkBlockingItems(processId);
 		fillOpenTasks();
 	}
 
 	private void initProcess() {
-		processEngine = ProcessDefinitionProvider.getReferenceProcess();
+		processEngine = ProcessDefinitionProvider.getApplianceProcess();
 	}
 
 	private void fillOpenTasks() {
 		Connection connection = null;
 		try {
 			connection = ProcessDAO.getConnection();
-			List<ProcessItemEntity> openTasks = ProcessDAO.loadOpenTasks(processId, ProcessItemType.TASK, connection );
+			List<ProcessItemEntity> openTasks = ProcessDAO.loadOpenItems(processId, ProcessItemType.TASK, connection );
 			tbProcesses.setData(openTasks);
 			ProcessDAO.returnConnection(connection);
 		} catch (ClassNotFoundException | SQLException e) {
