@@ -45,8 +45,6 @@ public class ProcessGUI extends JFrame implements MouseListener {
 
 	private JButton btnProceed;
 	
-	private JButton btnCheckTimers;
-
 	private ProcessEngine processEngine;
 
 	private int processId;
@@ -109,19 +107,11 @@ public class ProcessGUI extends JFrame implements MouseListener {
 			}
 		});
 		// ------------------------------------------------
-		btnCheckTimers = new JButton("check timers");
-		btnCheckTimers.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-//				checkTimers();
-			}
-		});
-		// ------------------------------------------------
 		tbProcesses = new ProcessTable();
 		add(tbProcesses, BorderLayout.CENTER);
 		// ------------------------------------------------
 		tbMain.add(btnStart);
 		tbMain.add(btnProceed);
-		tbMain.add(btnCheckTimers);
 		add(tbMain, BorderLayout.NORTH);
 		// ------------------------------------------------
 		tbProcesses.addMouseListener(this);
@@ -138,7 +128,7 @@ public class ProcessGUI extends JFrame implements MouseListener {
 	}
 
 	private void initProcess() {
-		processEngine = ProcessDefinitionProvider.getApplianceProcess();
+		processEngine = ProcessDefinitionProvider.getReferenceProcess();
 	}
 
 	private void fillOpenTasks() {
