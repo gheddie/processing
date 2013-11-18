@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import de.gravitex.processing.core.dao.DaoFormatterUtils;
 import de.gravitex.processing.core.dao.ProcessDAO;
 import de.gravitex.processing.core.dao.ProcessItemEntity;
 import de.gravitex.processing.core.exception.ProcessException;
@@ -283,7 +284,13 @@ public class ProcessEngine {
 	}
 
 	private boolean timerExpired(ProcessItemEntity entity) {
-		return Calendar.getInstance().getTime().after(entity.getExpiryDate());
+		Date now = Calendar.getInstance().getTime();
+		Date timerExpiryDate = entity.getExpiryDate();
+		long millisRemaining = entity.getExpiryDate().getTime() - now.getTime();
+		if (millisRemaining > 0) {
+			logger.info(DaoFormatterUtils.formatTimePeriod(millisRemaining) + " remaining in timer '"+entity.getName()+"'.");
+		}
+		return now.after(timerExpiryDate);
 	}
 
 	private void loopFromHere(int processId, BlockingItem taskItem, Connection connection) {

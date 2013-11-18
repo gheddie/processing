@@ -34,6 +34,8 @@ import de.gravitex.processing.core.gui.ProcessTable;
 public class ProcessGUI extends JFrame implements MouseListener {
 
 	private static Logger logger = Logger.getLogger(ProcessGUI.class);
+	
+	private static final int CHECK_TIMER_INTERVAL = 5000;
 
 	private static final long serialVersionUID = 1L;
 
@@ -45,13 +47,27 @@ public class ProcessGUI extends JFrame implements MouseListener {
 	
 	private JButton btnCheckTimers;
 
-	private ProcessEngine processContainer;
+	private ProcessEngine processEngine;
 
 	private int processId;
 
 	private ProcessTable tbProcesses;
 
 	protected String taskToResume;
+	
+	private Thread watchTimerThread = new Thread() {
+		public void run() {
+			while (true) {
+				try {
+					logger.info("thread is checking timers...");
+					checkTimers();
+					Thread.sleep(CHECK_TIMER_INTERVAL);
+				} catch (InterruptedException e) {
+					logger.error(e);
+				}
+			}
+		}
+	};
 
 	public ProcessGUI() {
 		super();
@@ -67,7 +83,7 @@ public class ProcessGUI extends JFrame implements MouseListener {
 				initProcess();
 				try {
 					ProcessDAO.clearAll();
-					processId = processContainer.startProcess();
+					processId = processEngine.startProcess();
 					fillOpenTasks();
 				} catch (ProcessException e) {
 					logger.error(e);
@@ -84,7 +100,7 @@ public class ProcessGUI extends JFrame implements MouseListener {
 				}
 				initProcess();
 				try {
-					processContainer.finishTask(taskToResume, processId);
+					processEngine.finishTask(taskToResume, processId);
 					taskToResume = null;
 					fillOpenTasks();
 				} catch (ProcessException pe) {
@@ -96,9 +112,7 @@ public class ProcessGUI extends JFrame implements MouseListener {
 		btnCheckTimers = new JButton("check timers");
 		btnCheckTimers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				initProcess();
-				processContainer.checkTimers(processId);
-				fillOpenTasks();
+//				checkTimers();
 			}
 		});
 		// ------------------------------------------------
@@ -112,11 +126,19 @@ public class ProcessGUI extends JFrame implements MouseListener {
 		// ------------------------------------------------
 		tbProcesses.addMouseListener(this);
 		// ------------------------------------------------
+		watchTimerThread.start();
+		// ------------------------------------------------
 		setVisible(true);
+	}
+	
+	private void checkTimers() {
+		initProcess();
+		processEngine.checkTimers(processId);
+		fillOpenTasks();
 	}
 
 	private void initProcess() {
-		processContainer = ProcessDefinitionProvider.getTestTimer();
+		processEngine = ProcessDefinitionProvider.getApplianceProcess();
 	}
 
 	private void fillOpenTasks() {
@@ -185,8 +207,8 @@ public class ProcessGUI extends JFrame implements MouseListener {
 	public static void main(String[] args) {
 
 		// log4j
-		//PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
-		PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
+		PropertyConfigurator.configure("C:\\log4j_props\\processing_log4j.properties");
+		//PropertyConfigurator.configure("/Users/stefan/log4j_props/log4j.properties");
 
 		// start process gui
 		new ProcessGUI();

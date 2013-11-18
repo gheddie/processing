@@ -85,7 +85,7 @@ public class ProcessDAO {
 			st = connection.createStatement();
 			String sql = null;
 			if (task.getExpiryDate() != null) {
-				sql = "insert into process_item (name, processId, state, expiryDate, itemType) values ('" + task.getName() + "', '" + processId + "', '"+task.getState()+"', '"+DAOUtils.formatDateForDB(task.getExpiryDate())+"', '"+task.getItemType()+"')";	
+				sql = "insert into process_item (name, processId, state, expiryDate, itemType) values ('" + task.getName() + "', '" + processId + "', '"+task.getState()+"', '"+DaoFormatterUtils.formatDateForDB(task.getExpiryDate())+"', '"+task.getItemType()+"')";	
 			} else {
 				sql = "insert into process_item (name, processId, state, expiryDate, itemType) values ('" + task.getName() + "', '" + processId + "', '"+task.getState()+"', null, '"+task.getItemType()+"')";
 			}
@@ -123,7 +123,7 @@ public class ProcessDAO {
 			task.setName(rs.getString(TASK_COLUMN_INDEX_NAME));
 			task.setProcessId(rs.getInt(TASK_COLUMN_INDEX_PROCESS_REF));
 			task.setState(TaskState.valueOf(rs.getString(TASK_COLUMN_INDEX_STATE)));
-			task.setExpiryDate(DAOUtils.parseDBDate(rs.getString(TASK_COLUMN_INDEX_EXPIRY_DATE)));
+			task.setExpiryDate(DaoFormatterUtils.parseDBDate(rs.getString(TASK_COLUMN_INDEX_EXPIRY_DATE)));
 			task.setItemType(ProcessItemType.valueOf(rs.getString(TASK_COLUMN_INDEX_ITEMTYPE)));
 			return task;
 		} catch (Exception e) {

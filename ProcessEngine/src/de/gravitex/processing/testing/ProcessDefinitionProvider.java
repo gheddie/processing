@@ -21,7 +21,7 @@ public class ProcessDefinitionProvider {
 	
 	private static Logger			logger					= Logger.getLogger(ProcessDefinitionProvider.class);
 
-	public static ProcessEngine getBewerbung() {
+	public static ProcessEngine getApplianceProcess() {
 		
 		ProcessEngine processContainer = new ProcessEngine();
 		try {

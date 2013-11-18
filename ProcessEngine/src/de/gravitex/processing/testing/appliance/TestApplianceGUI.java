@@ -36,7 +36,7 @@ public class TestApplianceGUI extends JFrame {
 	}	
 
 	private void initProcess() {
-		processContainer = ProcessDefinitionProvider.getBewerbung();
+		processContainer = ProcessDefinitionProvider.getApplianceProcess();
 	}
 	
 	private void initListeners() {
